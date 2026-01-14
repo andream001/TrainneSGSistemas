@@ -465,7 +465,7 @@ DevOut("Texto")          // Imprime na posição atual
 @ 10, 1 SAY "Texto:" GET cTexto PICTURE "!"           // Força maiúsculas (alt)
 
 // MÁSCARAS DE DATA
-@ 11, 1 SAY "Data:" GET dData PICTURE "99/99/99"     // DD/MM/AA
+@ 11, 1 SAY "Data:" GET dData  "99/99/99"     // DD/MM/AA
 @ 12, 1 SAY "Data:" GET dData PICTURE "99/99/9999"   // DD/MM/AAAA
 
 // MÁSCARAS DE TELEFONE/CPF/CNPJ
@@ -1254,6 +1254,19 @@ SET ALTERNATE TO "log.txt" // Define arquivo de log
 SET BELL OFF               // Desliga beep
 SET CENTURY ON             // Mostra século em datas (4 dígitos)
 SET COLOR TO "W/B"         // Define cores
+// CORES (COLOR / SetColor)
+// Formato básico: "FG/BG" onde FG=cor do texto (foreground) e BG=cor do fundo (background)
+// Cores comuns: N=Preto, W=Branco, R=Vermelho, G=Verde, B=Azul, Y=Amarelo, C=Ciano, M=Magenta
+// Intensidade (quando suportado): use "+" para brilho no texto, ex.: "W+/B", "R+/N" (depende da GT/terminal)
+// Paleta: SET COLOR TO também aceita uma lista separada por vírgulas para definir uma paleta
+// Ex.: SET COLOR TO "W/N, N/W, G/N, R+/N"  // pares 1..4 da paleta
+// Uso dinâmico: SetColor("FG/BG") altera a cor atual e retorna a cor anterior
+// Exemplo de alternância de cor em tempo de execução:
+// LOCAL cOld := SetColor("N/W")
+// @ 1, 1 SAY "Preto sobre branco"
+// SetColor("G/N")
+// @ 2, 1 SAY "Verde sobre preto"
+// SetColor(cOld)  // Restaura a cor anterior
 SET CONFIRM ON             // Confirma saída de GET
 SET CONSOLE OFF            // Desliga output no console
 SET DATE BRITISH           // Formato DD/MM/YYYY
