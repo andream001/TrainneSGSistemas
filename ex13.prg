@@ -1,3 +1,4 @@
+SetMode(25,80)
 SetColor('N/W')
 
 clear
@@ -6,7 +7,8 @@ nCodProd := 0
 cClasse  := Space(30)
 cCor     := Space(5)
 
-@ 01,01 to 03,59 color 'N/W' box
+@ 01,01 to 03,59 color 'N/W'
+@ 04,01 to 06,59 color 'N/W'
 
 @ 02,10 say "Codigo do Produto:"
 
