@@ -1,3 +1,5 @@
+SetColor('N/W')
+
 clear
 
 nIdade := 0
@@ -9,14 +11,14 @@ read
 
 if nIdade == 21
 
-   @ 02,10 say "Usu�rio com 21 anos."
+   @ 02,10 say "Usuario com 21 anos."
 
    if nIdade < 21
 
-      @ 02,10 say "Usu�rio com menos de 21 anos."
+      @ 02,10 say "Usuario com menos de 21 anos."
    else
 
-      @ 02,10 say "Usu�rio com mais de 21 anos."
+      @ 02,10 say "Usuario com mais de 21 anos."
 
    endif
 endif

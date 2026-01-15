@@ -1,5 +1,7 @@
-clear
+SetMode(25,80)
+SetColor('N/W')
 
+clear
 
 nNum1    := 0
 nNum2    := 0
@@ -20,7 +22,6 @@ nProduto := 0
 read
 
 @ 05,40 say nProduto
-
 
 nProduto := nNum1 * nNum2 * nNum3
 

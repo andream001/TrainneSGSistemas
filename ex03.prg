@@ -1,3 +1,6 @@
+SetMode(25,80)
+SetColor('N/W')
+
 clear
 
 nNum1 := 0

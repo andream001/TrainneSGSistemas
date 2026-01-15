@@ -1,4 +1,3 @@
-SetMode(25,80)
 SetColor('N/W')
 
 clear
@@ -12,7 +11,7 @@ cCor     := Space(5)
 
 @ 02,10 say "Codigo do Produto:"
 
-@ 02,30 get nCodProd picture "99" valid nCodProd >= 1 .and. nCodProd <= 15
+@ 02,28 get nCodProd picture "99" valid nCodProd >= 1 .and. nCodProd <= 15
 read
 
 if nCodProd == 1
@@ -41,7 +40,6 @@ elseif nCodProd >= 8 .and. nCodProd <= 15
     cCor    := 'GR+/W'
 endif
 
-@ 05,10 say "Classe do Produto:" color 'N/W'
-@ 05,30 say cClasse              color (cCor)
+@ 05,10 say "Classe do Produto: " + cClasse Color(cCor)
 
 InKey(0)

@@ -1,3 +1,5 @@
+SetColor('N/W')
+
 clear
 
 nIdade      := 0
@@ -5,6 +7,7 @@ cNome       := Space(30)
 cCategorias := Space(30)
 
 @ 01,01 to 06,44
+
 @ 03,05 say "Nome:"
 @ 04,05 say "Idade:"
 
@@ -16,7 +19,7 @@ read
 
 if nIdade >= 18
 
-   cCategorias := "S�nior"
+   cCategorias := "Senior"
 
 elseif nIdade <= 7
 
@@ -36,7 +39,6 @@ elseif nIdade <= 17
 
 endif
 
-@ 03,10 say "Categoria:"
-@ 03,21 say cCategorias
+@ 03,10 say "Categoria: " + cCategorias
 
 InKey(0)

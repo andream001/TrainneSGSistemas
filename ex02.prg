@@ -1,3 +1,6 @@
+SetMode(25,80)
+SetColor('N/W')
+
 clear
 
 cNome  := Space(30)
@@ -5,6 +8,7 @@ nIdade := 0
 nPeso  := 0
 
 @ 01,01 to 05,55
+
 @ 02,10 say "Nome: "
 @ 03,10 say "Peso: "
 @ 04,10 say "Idade:"
@@ -15,6 +19,7 @@ nPeso  := 0
 read
 
 @ 02,05 clear to 04,45
+
 @ 02,17 say cNome  picture '@!'
 @ 03,16 say nPeso  picture '@E 999.99'
 @ 04,16 say nIdade picture '999'
