@@ -72,7 +72,8 @@ nValorP := nTotal / nParcelas
 
 if nTotal > nLimite
     cCor := 'R/W'
-    endif
+endif
+
 Inkey(0)
 
 cls
@@ -88,7 +89,6 @@ SetColor('W/GR+')
 
 @ 02,33 say "SUPERMERCADO" 
 @ 04,10 say "ITEM          DESCRICAO         QUANTIDADE          SUBTOTAL"
-
 @ 06,11 say "1        " + AllTrim(cProdA)
 @ 08,11 say "2        " + AllTrim(cProdB)
 @ 10,11 say "3        " + AllTrim(cProdC)
@@ -96,14 +96,12 @@ SetColor('W/GR+')
 @ 06,45 say AllTrim(Str(nQtdA))
 @ 08,45 say AllTrim(Str(nQtdB))
 @ 10,45 say AllTrim(Str(nQtdC))
-
 @ 06,62 say AllTrim(Transform(nSubA, '@E'))
 @ 08,62 say AllTrim(Transform(nSubB, '@E'))
 @ 10,62 say AllTrim(Transform(nSubC, '@E'))
 
 @ 13,33 say "TOTAL:"               
 @ 13,40 say AllTrim(Transform(nTotal, '@E 999999.99')) Color(cCor)
-
 @ 17,10 say "CLIENTE...............: " + AllTrim(cNome)
 
 if nParcelas > 0

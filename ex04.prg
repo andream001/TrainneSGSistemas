@@ -1,4 +1,3 @@
-SetMode(25,80)
 SetColor('N/W')
 
 clear
@@ -9,7 +8,7 @@ clear
 @ 04,10 say"|*    Sistema desenvolvido pelos alunos do            *|"
 @ 05,10 say"|*Curso de Programa��o da SG Sistemas-Proj.SGTrainee *|"
 @ 06,10 say"|*                                                    *|"
-@ 07,10 say"|* Aluno: Andr� Luiz Bunhak                          *|"
+@ 07,10 say"|* Aluno: Andr� Luiz Bunhak    Numero23              *|"
 @ 08,10 say"|* Linguagem de Programa��o: Harbour                *|"
 @ 09,10 say"|* 07/01/2026                                         *|"
 @ 10,10 say"|******************************************************|"
