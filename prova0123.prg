@@ -1,5 +1,6 @@
 //André Luiz Bunhak
-
+Set date BRITISH
+Set epoch to 1940
 SetColor('N/W')
 
 clear
@@ -12,7 +13,11 @@ cCurso       := Space(30)
 cStatusA     := Space(5)
 cStatusB     := Space(5)
 cStatusC     := Space(5)
+cDpA         := Space(30)
+cDpB         := Space(30)
+cDpC         := Space(30)        
 cCorNota     := 'G/W'
+
 
 nSerie            := 0
 nValorMensalidade := 0
@@ -63,9 +68,9 @@ endif
 
 InKey(0)
 
+@ 09,03 say "DISCIPLINAS:"
 @ 09,17 say "1 BIMESTRE   2 BIMESTRE   3 BIMESTRE   4 BIMESTRE   STATUS" 
 @ 10,17 say "NOTA FALTA   NOTA FALTA   NOTA FALTA   NOTA FALTA"
-@ 09,03 say "DISCIPLINAS:"
 
 @ 12,03 get cDisciplina1 picture '@!'  valid !Empty(cDisciplina1)
 @ 12,16 get nNotaB1      picture '999' valid nNotaB1   >= 0 .and. nNotaB1  <= 100
@@ -155,5 +160,6 @@ Else
 endif
 
 @ 18,69 say cStatusC Color(cCorNota)
+
 
 Inkey(0)
