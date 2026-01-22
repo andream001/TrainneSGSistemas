@@ -98,7 +98,7 @@ endif
 @ 02,03 say "MARINGA, " + AllTrim(Str(nDia))
 @ 02,15 say "de "       + AllTrim(cMes)
 @ 02,27 say "de "       + AllTrim(Str(nAno))
-@ 02,35 say "("         + AllTrim(cDiadeSemana) + ")"
+@ 02,35 say "("         + AllTrim(cDiadeSemana) + ")" 
 @ 02,60 say "ESCOLA SGSISTEMAS"
 @ 04,03 say "ALUNO......:"
 @ 05,03 say "CURSO......:"

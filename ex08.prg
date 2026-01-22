@@ -47,6 +47,7 @@ nSubC     := 0
 @ 03,12 get nLimite      picture '@E 9999.99' valid nLimite > 0
 @ 02,57 get dDataPed     picture "99/99/9999" valid !Empty(dDataPed) .AND. dDataPed == date()
 @ 03,58 get dDataEntrega picture "99/99/9999" valid !Empty(dDataPed) .AND. dDataPed >= date()
+@ 08,15 get cProdA       picture "@!"         valid !Empty(cProdA)
 @ 08,43 get nQtdA        picture '99.99'      valid nQtdA   > 0
 @ 08,55 get nValorA      picture '@E 999.99'  valid nValorA > 0
 read
@@ -71,7 +72,7 @@ read
 
 nSubC := nValorC * nQtdC
 
-@ 08,63 say nSubC    picture '@E 9,999.99'
+@ 16,63 say nSubC    picture '@E 9,999.99'
 
 @ 20,24 get cFormP   picture '@!'         valid cFormP $ "VP"
 read
@@ -124,8 +125,8 @@ SetColor('W/GR+')
 
 @ 13,33 say "TOTAL:"               
 @ 17,10 say "CLIENTE...............: " + AllTrim(cNome)
-@ 18,10 say "DATA DE PEDIDO........: " + dTOC(dDataPed)     picture "99/99/9999"
-@ 19,10 say "DATA DE ENTREGA.......: " + dTOC(dDataEntrega) picture "99/99/9999"
+@ 18,10 say "DATA DE PEDIDO........: " + dTOC(dDataPed)  
+@ 19,10 say "DATA DE ENTREGA.......: " + dTOC(dDataEntrega) 
 
 if nParcelas > 0
     @ 20,10 say "QUANTIDADE DE PARCELAS: " + AllTrim(Str(nParcelas))

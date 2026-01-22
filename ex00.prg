@@ -20,6 +20,10 @@ nProduto := 0
 @ 04,20 get nNum3 picture '@E 9999999.99'       valid nNum3 < nNum2                       //3 numero deve ser menor que o segundo
 read
 
+if lastkey() == 27
+   EXIT
+endif
+   
 @ 05,40 say nProduto
 
 nProduto := nNum1 * nNum2 * nNum3

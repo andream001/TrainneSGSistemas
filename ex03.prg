@@ -1,22 +1,31 @@
+Set date BRITISH
+Set epoch to 1940
 SetColor('N/W')
 
 clear
 
-nNum1 := 0
-nNum2 := 0
+do while .t.
 
-@ 01,01 to 05,40
+   nNum1 := 0
+   nNum2 := 0
 
-@ 02,10 say "Numero 1:"
-@ 03,10 say "Numero 2:"
-@ 04,10 say "Produto: "
+   @ 01,01 to 05,40
 
-@ 02,20 get nNum1
-@ 03,20 get nNum2
-read
+   @ 02,10 say "Numero 1:"
+   @ 03,10 say "Numero 2:"
+   @ 04,10 say "Produto: "
 
-nProduto := nNum1 * nNum2
+   @ 02,20 get nNum1
+   @ 03,20 get nNum2
+   read
+   
+   if lastkey() == 27
+      EXIT
+   endif
 
-@ 04,20 say nProduto
+   nProduto := nNum1 * nNum2
+
+   @ 04,20 say nProduto
+enddo
 
 InKey(0)
