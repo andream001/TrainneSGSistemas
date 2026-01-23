@@ -24,7 +24,7 @@ do while .t.
 	cls
 	nContProduto := 1
 	nLinha       := 05
-
+    	
 	@ 02,43 say "DATA PEDIDO.:"
 	@ 03,43 say "DATA ENTREGA:"
 	@ 02,04 say "NOME:"
