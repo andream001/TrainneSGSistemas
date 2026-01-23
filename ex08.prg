@@ -7,132 +7,125 @@ clear
 dDataPed     := date()
 dDataEntrega := cTod(" ")
 
-cCor   := 'G/W'
-cNome  := Space(30)
-cProdA := Space(20)
-cProdB := Space(20)
-cProdC := Space(20)
-cFormP := Space(1)
+cCor     := 'G/W'
+cNome    := Space(30)
+cFormP   := Space(1)
 
-nParcelas := 0
-nValorP   := 0
-nLimite   := 0
-nValorA   := 0
-nValorB   := 0
-nValorC   := 0
-nQtdA     := 0
-nQtdB     := 0
-nQtdC     := 0
-nTotal    := 0
-nSubA     := 0
-nSubB     := 0
-nSubC     := 0
+nColuna      := 15
+nParcelas    := 0
+nValorP      := 0
+nLimite      := 0
+nTotal       := 0
+nSubTotal    := 0
+nLimiteLinha := 15
 
+do while .t.
+	
+	cls
+	nContProduto := 1
+	nLinha       := 05
 
-@ 02,43 say "DATA PEDIDO.:"
-@ 03,43 say "DATA ENTREGA:"
-@ 02,04 say "NOME:"
-@ 03,04 say "LIMITE:"
-@ 05,07 say "ITEM"
-@ 05,21 say "PRODUTO"
-@ 05,40 say "QUANTIDADE"
-@ 05,56 say "VALOR"
-@ 05,63 say "SUB-TOTAL"
-@ 08,08 say "1"
-@ 12,08 say "2"
-@ 16,08 say "3"
-@ 20,04 say "FORMA DE PAGAMENTO:"
+	@ 02,43 say "DATA PEDIDO.:"
+	@ 03,43 say "DATA ENTREGA:"
+	@ 02,04 say "NOME:"
+	@ 03,04 say "LIMITE:"
+	@ 05,07 say "ITEM"
+	@ 05,21 say "PRODUTO"
+	@ 05,40 say "QUANTIDADE"
+	@ 05,54 say "VALOR"
+	@ 05,63 say "SUB-TOTAL"
+	@ 19,04 say "FORMA DE PAGAMENTO:"
+	
+	@ 02,10 get cNome        picture '@!'          valid !Empty(cNome)
+	@ 03,12 get nLimite      picture '@E 9,999.99' valid nLimite > 0
+	@ 02,57 get dDataPed                           valid !Empty(dDataPed) .AND. dDataPed == date()
+	read
 
-@ 02,10 get cNome        picture '@!'         valid !Empty(cNome)
-@ 03,12 get nLimite      picture '@E 9999.99' valid nLimite > 0
-@ 02,57 get dDataPed     picture "99/99/9999" valid !Empty(dDataPed) .AND. dDataPed == date()
-@ 03,58 get dDataEntrega picture "99/99/9999" valid !Empty(dDataPed) .AND. dDataPed >= date()
-@ 08,15 get cProdA       picture "@!"         valid !Empty(cProdA)
-@ 08,43 get nQtdA        picture '99.99'      valid nQtdA   > 0
-@ 08,55 get nValorA      picture '@E 999.99'  valid nValorA > 0
-read
+	if lastkey() == 27
+		cMensagem := 'DESEJA SAIR?'
+		cCor   := 'G/N'
+		nOpcao := Alert(cMensagem, {'SIM' , 'NAO'} , cCor)
+		if nOpcao == 1
+			EXIT
+		endif
+		loop
+	endif
 
-nSubA := nValorA * nQtdA
+	do while .t.
+		
+		nQuantidade  := 0
+		nValorProd   := 0
+		
+		cProduto := Space(30)
+		
+		@ nLinha += 2,08 say AllTrim(Str(nContProduto++)) 
+		
+		@ nLinha,15 get cProduto    picture "@!"        valid !Empty(cProduto)
+		@ nLinha,43 get nQuantidade picture '99.99'     valid nQuantidade > 0
+		@ nLinha,53 get nValorProd  picture '@E 999.99' valid nValorProd  > 0
+		read
+		
+		nSubTotal := nValorProd * nQuantidade
+		nTotal    += nSubTotal
+		
+		if nTotal > nLimite
+			cCor := 'R/W'
+		endif
+			
+		@ nLinha,63 say AllTrim(Transform(nSubTotal , "@E 9,9999.99"))
 
-@ 08,63 say nSubA    picture '@E 9,999.99'
+		if nLinha > nLimiteLinha
+			InKey(0)
+			@ 06,01 clear to 18,79
+			nLinha := 05
+		endif
 
-@ 12,15 get cProdB   picture '@!'         valid !Empty(cProdB)
-@ 12,43 get nQtdB    picture '99.99'      valid nQtdB   > 0
-@ 12,55 get nValorB  picture '@E 999.99'  valid nValorB > 0
-read
+		if lastkey() == 27
+			cMensagem := 'DESEJA?'
+			cCor   := 'G/N'
+			nOpcao := Alert(cMensagem, {'CONTINUAR' , 'ABANDONAR' , 'FATURAR'} , cCor)
+			
+			if     nOpcao == 1
+				loop
+			
+			elseif nOpcao == 2
+				EXIT
+			
+			elseif nOpcao == 3 .and. nTotal > 0
+				
+				@ 21,04 say "TOTAL.................: " + AllTrim(Transform(nTotal , "@E 9,999.99")) color (cCor)           
+				
+				@ 03,57 get dDataEntrega picture "99/99/9999" valid !Empty(dDataPed) .AND. dDataPed >= date()
+				@ 19,24 get cFormP       picture '@!'         valid cFormP $ "VP"
+				read
+				
+				if cFormP == 'P'
+					@ 19,33 say "QUANTIDADE DE PARCELAS:"
+	
+					@ 19,57 get nParcelas picture '99' valid nParcelas > 0 .and. nParcelas <= 10
+					read	
+						
+					nValorP := nTotal / nParcelas
+							
+					if nParcelas > 0
+						@ 22,04 say "VALOR DA PARCELA......: " + AllTrim(Transform(nValorP , "@!E")) color (cCor)
+					endif
+				endif
 
-nSubB := nValorB * nQtdB
-
-@ 12,63 say nSubB    picture '@E 9,999.99'
-
-@ 16,15 get cProdC   picture '@!'         valid !Empty(cProdC)
-@ 16,43 get nQtdC    picture '99.99'      valid nQtdC   > 0
-@ 16,55 get nValorC  picture '@E 999.99'  valid nValorC > 0
-read
-
-nSubC := nValorC * nQtdC
-
-@ 16,63 say nSubC    picture '@E 9,999.99'
-
-@ 20,24 get cFormP   picture '@!'         valid cFormP $ "VP"
-read
-
-InKey(0)
-
-if cFormP == 'P'
-    @ 21,04 say "QUANTIDADE DE PARCELAS:"
-    
-    @ 21,28 get nParcelas picture '99' valid nParcelas > 0 .and. nParcelas <= 10
-    read
-    endif
-
-nSubA   := nQtdA  * nValorA
-nSubB   := nQtdB  * nValorB
-nSubC   := nQtdC  * nValorC
-nTotal  := nSubA  + nSubB + nSubC
-nValorP := nTotal / nParcelas
-
-if nTotal > nLimite
-    cCor := 'R/W'
-endif
-
-Inkey(0)
-
-cls
-InKey(1)
-@ 13,33 say "PROCESSANDO COMPRAS..." Color('N/W')
-Inkey(3)
-cls
-
-SetColor('W/GR+')
-
-@ 02,03 clear to 23,77
-@ 01,03 to 23,77  
-
-@ 02,33 say "SUPERMERCADO" 
-@ 04,10 say "ITEM          DESCRICAO         QUANTIDADE          SUBTOTAL"
-@ 06,11 say "1        " + AllTrim(cProdA)
-@ 08,11 say "2        " + AllTrim(cProdB)
-@ 10,11 say "3        " + AllTrim(cProdC)
-
-@ 06,45 say AllTrim(Str(nQtdA))
-@ 08,45 say AllTrim(Str(nQtdB))
-@ 10,45 say AllTrim(Str(nQtdC))
-@ 06,62 say AllTrim(Transform(nSubA, '@E'))
-@ 08,62 say AllTrim(Transform(nSubB, '@E'))
-@ 10,62 say AllTrim(Transform(nSubC, '@E'))
-@ 13,40 say AllTrim(Transform(nTotal, '@E 999999.99')) Color(cCor)
-
-@ 13,33 say "TOTAL:"               
-@ 17,10 say "CLIENTE...............: " + AllTrim(cNome)
-@ 18,10 say "DATA DE PEDIDO........: " + dTOC(dDataPed)  
-@ 19,10 say "DATA DE ENTREGA.......: " + dTOC(dDataEntrega) 
-
-if nParcelas > 0
-    @ 20,10 say "QUANTIDADE DE PARCELAS: " + AllTrim(Str(nParcelas))
-    @ 21,10 say "VALOR DA PARCELA......: " + AllTrim(Transform(nValorP , "@!E"))
-    endif
-
+				if lastkey() == 27 
+					cMensagem := 'DESEJA?'
+					cCor   := 'G/N'
+					nOpcao := Alert(cMensagem, {'CONTINUAR' , 'ABANDONAR'} , cCor)
+					if nOpcao == 2
+						EXIT
+					endif
+				endif
+			InKey(0)
+			EXIT
+			endif
+		endif	
+	enddo
+enddo
 InKey(0)
 
 

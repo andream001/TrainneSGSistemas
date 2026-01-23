@@ -8,6 +8,8 @@ do while .t.
 
    nNum1 := 0
    nNum2 := 0
+  
+   cMensagem := 'DESEJA SAIR?'
 
    @ 01,01 to 05,40
 
@@ -20,7 +22,12 @@ do while .t.
    read
    
    if lastkey() == 27
-      EXIT
+      cCor   := 'G/N'
+      nOpcao := Alert(cMensagem, {'SIM' , 'NAO'} , cCor)
+      if nOpcao == 1
+         EXIT
+      endif
+      loop
    endif
 
    nProduto := nNum1 * nNum2
