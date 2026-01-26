@@ -6,8 +6,17 @@ clear
 
 do while .t.
    
-   nEmpregados := 0
-   nContador   := 0
+   nEmpregados    := 0
+   nContador      := 0
+   nTotalHomens   := 0
+   nTotalMulheres := 0
+   nHomens91anos  := 0
+   
+   nMulherespagamIRRF    := 0
+   nTotalRemuAposentados := 0
+   nMulheresantes2013    := 0
+   nMulheresAposentadas  := 0
+   nHomensAposentados    := 0
 
    @ 01,01 to 03,79
 
@@ -23,6 +32,7 @@ do while .t.
          if nOpcao == 1
             EXIT
          endif
+         loop
    endif
 
    do while nEmpregados > nContador
@@ -30,7 +40,6 @@ do while .t.
       cNomeColaborador := Space(30)
       cSexo            := Space(1)
       
-      dData            := Date()
       dDataNascimento  := CToD("")
       dDataAdmissao    := CTod("")
       dDataDemissao    := CToD("")
@@ -39,14 +48,13 @@ do while .t.
       nLimiteIRRF          := 0
       nAdcNoturno          := 0
       nAdcInsalubridade    := 0
-      nAposentadoriaFinal  := 0
-      
-      nMulheresAposentadas := 0
-      nHomensAposentados   := 0
+      nRemuneracaoFinal    := 0
+
+      lAptoAposentadoria   := .f.
 
       @ 04,01 to 14,79
 
-      @ 04,31 say "DADOS DO EMPREGADO"
+      @ 04,31 say "DADOS DO EMPREGADO" + AllTrim(Str(nContador + 1))
       @ 05,02 say "NOME COLABORADOR.......:"
       @ 06,02 say "SEXO...................:  [M]ASCULINO [F]EMININO"
       @ 07,02 say "DATA DE NASCIMENTO.....:"
@@ -68,23 +76,75 @@ do while .t.
       @ 13,27 get nAdcInsalubridade picture "99"           valid !Empty(nAdcInsalubridade)
       read
       
-      nIdade := (dData - dDataNascimento) / 365
+      //calculos
 
-      nTempoContruibuicao := (dDataDemissao - dDataAdmissao) / 365
+      nIdade := (Date() - dDataNascimento) / 365.25
+
+      nTempoContruibuicao := (dDataDemissao - dDataAdmissao) / 365.25
       
+      if cSexo == "M"
+         nTotalHomens++
+      else
+         nTotalMulheres++
+      endif
+
+      nRemuneracaoFinal := nSalarioBase
+      nRemuneracaoFinal += nSalarioBase * (nAdcNoturno / 100)
+      nRemuneracaoFinal += nSalarioBase * (nAdcInsalubridade / 100)
+
+      if dDataAdmissao <= CToD("31/12/2012") .AND. dDataDemissao >= cTod("01/01/2009")
+         nRemuneracaoFinal += nSalarioBase * 0.02
+      endif
+
+      if dDataAdmissao <= CToD("31/12/2018") .AND. dDataDemissao >=cTod("01/01/2015")
+         nRemuneracaoFinal -= nSalarioBase * 0.05
+      endif
+
+      lPagaIRRF := .F.
+
+      if nRemuneracaoFinal > nLimiteIRRF
+         nRemuneracaoFinal -= nRemuneracaoFinal * 0.09
+         lPagaIRRF := .T.
+         if cSexo == "F"
+            nMulherespagamIRRF++
+         endif
+      endif
+
+      if cSexo == "M"
+         if nTempoContruibuicao >= 30 .AND. nIdade >= 61
+            lAptoAposentadoria    := .t.
+            nHomensAposentados    ++
+            nTotalRemuAposentados += nRemuneracaoFinal
+            if nIdade > 91
+               nHomens91anos++
+            endif
+         endif
+      else
+         if nTempoContruibuicao >= 20 .AND. nIdade >=58
+            lAptoAposentadoria    := .t.
+            nMulheresAposentadas  ++
+            nTotalRemuAposentados += nRemuneracaoFinal
+            if dDataAdmissao < cTod("01/01/2013")
+               nMulheresantes2013++
+            endif
+         endif
+      endif
       
       @ 15,02 say nTempoContruibuicao
       @ 16,02 say nIdade
 
       if lastkey() == 27
-         cMensagem := 'PROCESSAR EMPREGADO N: ' + AllTrim(Str(nContador))
+         cMensagem := 'PROCESSAR EMPREGADO N: ' + AllTrim(Str(nContador + 1))
          cCor   := 'W/R'
          nOpcao := Alert(cMensagem, {'CANCELAR' , 'RETORNAR' , 'PROCESSAR'} , cCor)
          if nOpcao == 1
             EXIT
-         elseif nOpcao == 3
+         elseif nOpcao == 2
             Loop
-         endif
+         
+         elseif nOpcao == 3 .OR. nContador == nEmpregados
+
+
       endif
       
 
