@@ -24,31 +24,50 @@ do while .t.
 	cls
 	nContProduto := 1
 	nLinha       := 05
-    	
+   
+   @ 01,01 to 04,79
+   @ 04,01 to 18,79
+   @ 18,01 to 24,79
+   @ 04,01 to 06,79
+   @ 04,01 to 18,11
+   @ 04,11 to 18,35
+   @ 04,35 to 18,52
+   @ 04,52 to 18,60
+   @ 04,60 to 18,79
+   @ 04,01 to 06,79
+   @ 06,01 to 08,79
+   @ 08,01 to 10,79
+   @ 10,01 to 12,79
+   @ 12,01 to 14,79
+
 	@ 02,43 say "DATA PEDIDO.:"
 	@ 03,43 say "DATA ENTREGA:"
-	@ 02,04 say "NOME:"
+	@ 02,04 say "NOME..:"
 	@ 03,04 say "LIMITE:"
-	@ 05,07 say "ITEM"
+	@ 05,04 say "ITEM"
 	@ 05,21 say "PRODUTO"
 	@ 05,40 say "QUANTIDADE"
 	@ 05,54 say "VALOR"
 	@ 05,63 say "SUB-TOTAL"
 	@ 19,04 say "FORMA DE PAGAMENTO:"
 	
-	@ 02,10 get cNome        picture '@!'          valid !Empty(cNome)
+	@ 02,13 get cNome        picture '@!'          valid !Empty(cNome)
 	@ 03,12 get nLimite      picture '@E 9,999.99' valid nLimite > 0
 	@ 02,57 get dDataPed                           valid !Empty(dDataPed) .AND. dDataPed == date()
 	read
 
 	if lastkey() == 27
-		cMensagem := 'DESEJA SAIR?'
-		cCor   := 'G/N'
-		nOpcao := Alert(cMensagem, {'SIM' , 'NAO'} , cCor)
-		if nOpcao == 1
+		
+      cMensagem  := 'DESEJA SAIR?'
+		cCorAlerta := 'G/N'
+		nOpcao     := Alert(cMensagem, {'SIM' , 'NAO'} , cCorAlerta)
+		
+      if nOpcao == 1
 			EXIT
 		endif
-		loop
+		
+      loop
+
 	endif
 
 	do while .t.
@@ -56,9 +75,9 @@ do while .t.
 		nQuantidade  := 0
 		nValorProd   := 0
 		
-		cProduto := Space(30)
+		cProduto := Space(20)
 		
-		@ nLinha += 2,08 say AllTrim(Str(nContProduto++)) 
+		@ nLinha += 2,06 say AllTrim(Str(nContProduto++)) 
 		
 		@ nLinha,15 get cProduto    picture "@!"        valid !Empty(cProduto)
 		@ nLinha,43 get nQuantidade picture '99.99'     valid nQuantidade > 0
