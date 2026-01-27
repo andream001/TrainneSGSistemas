@@ -39,6 +39,7 @@ do while .t.
    @ 08,01 to 10,79
    @ 10,01 to 12,79
    @ 12,01 to 14,79
+   @ 14,01 
 
 	@ 02,43 say "DATA PEDIDO.:"
 	@ 03,43 say "DATA ENTREGA:"

@@ -76,8 +76,16 @@ do while .t.
       @ 13,27 get nAdcInsalubridade picture "99"           valid !Empty(nAdcInsalubridade)
       read
       
-      //calculos
-
+      if lastkey() == 27
+         cMensagem := 'PROCESSAR EMPREGADO N: ' + AllTrim(Str(nContador + 1))
+         cCor   := 'W/R'
+         nOpcao := Alert(cMensagem, {'CANCELAR' , 'RETORNAR' , 'PROCESSAR'} , cCor)
+         if nOpcao == 1
+            EXIT
+         elseif nOpcao == 2
+            Loop
+         endif
+         
       nIdade := (Date() - dDataNascimento) / 365.25
 
       nTempoContruibuicao := (dDataDemissao - dDataAdmissao) / 365.25
@@ -129,41 +137,18 @@ do while .t.
             endif
          endif
       endif
+endif
+
+   @ 15,01 to
+
+   @ 16,02 say "IDADE: " + Str(nIdade,8,1) + " ANOS"   
+   @ 16,40 say "TEMPO CONTRIBUICAO: " + Str(nTempoContruibuicao,8,1) + " ANOS"
+   @ 17,02 say "REMUNERACAO FINAL: " + TRANSFORM(nRemuneracaoFinal, "@E 99,999.99")
+   @ 17,40 say IIF(lPagaIRRF, "IRRF = 9%" , "")
+
+   if lAptoAposentadoria   
+      @ 18,02 say   
       
-      @ 15,02 say nTempoContruibuicao
-      @ 16,02 say nIdade
-
-      if lastkey() == 27
-         cMensagem := 'PROCESSAR EMPREGADO N: ' + AllTrim(Str(nContador + 1))
-         cCor   := 'W/R'
-         nOpcao := Alert(cMensagem, {'CANCELAR' , 'RETORNAR' , 'PROCESSAR'} , cCor)
-         if nOpcao == 1
-            EXIT
-         elseif nOpcao == 2
-            Loop
-         
-         elseif nOpcao == 3 .OR. nContador == nEmpregados
-
-
-      endif
-      
-
-      nContador++
-      do while .t.
-         if cSexo == M .AND. nTempoContruibuicao >= 30 .AND. nIdade > 61
-            nAposentadoriaFinal := nSalarioBase
-            nHomensAposentados++
-            
-            if dDataAdmissao < CToD(01)
-               nAposentadoriaFinal += nSalarioBase * 0.02
-            endif
-
-            if dDataAdmissao >= CToD("01/01/")
-
-         elseif cSexo == F .AND. nTempoContruibuicao >=20 .AND. nIdade > 58
-            nMulheresAposentadas++
-         endif
-      enddo
    
    enddo
 
