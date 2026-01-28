@@ -10,6 +10,8 @@ do while .t.
 
    nCont := 0
    
+   @ 01,00 to 04,79
+
    @ 02,02 say "NOME:"
 
    @ 02,07 get cNome picture "@!" valid !Empty(cNome)
