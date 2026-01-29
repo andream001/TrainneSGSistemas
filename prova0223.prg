@@ -173,7 +173,7 @@ do while .t.
    endif
 
    @ 16,01 to 24,38 
-   @ 16,39 to 24,80 
+   @ 16,39 to 24,79
 
    @ 17,02 say "CUIDAR"
    @ 19,02 say "MENSAL.....:" + AllTrim(TRANSFORM(nValorFinalCuidar,      '@E  9,999.99')) color(cCorCuidar)

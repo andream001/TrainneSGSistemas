@@ -20,57 +20,46 @@ nSubTotal    := 0
 nLimiteLinha := 15
 
 do while .t.
-	
-	cls
+	clear
+
 	nContProduto := 1
 	nLinha       := 05
    
 	@ 01,01 to 04,79
-	@ 04,01 to 18,79
-   	@ 18,01 to 24,79
-   	@ 04,01 to 06,79
-	@ 04,01 to 18,11
-	@ 04,11 to 18,35
-	@ 04,35 to 18,52
-	@ 04,52 to 18,60
-	@ 04,60 to 18,79
-	@ 04,01 to 06,79
-	@ 06,01 to 08,79
-	@ 08,01 to 10,79
-	@ 10,01 to 12,79
-	@ 12,01 to 14,79
-
-	@ 02,43 say "DATA PEDIDO.:"
-	@ 03,43 say "DATA ENTREGA:"
+	
 	@ 02,04 say "NOME..:"
 	@ 03,04 say "LIMITE:"
-	@ 05,04 say "ITEM"
-	@ 05,21 say "PRODUTO"
-	@ 05,40 say "QUANTIDADE"
-	@ 05,54 say "VALOR"
-	@ 05,63 say "SUB-TOTAL"
-	@ 19,04 say "FORMA DE PAGAMENTO:"
+	@ 03,43 say "DATA ENTREGA:"
+	@ 02,43 say "DATA PEDIDO.:"
 	
 	@ 02,13 get cNome        picture '@!'          valid !Empty(cNome)
 	@ 03,12 get nLimite      picture '@E 9,999.99' valid nLimite > 0
 	@ 02,57 get dDataPed                           valid !Empty(dDataPed) .AND. dDataPed == date()
 	read
-
+	
 	if lastkey() == 27
-		
-      cMensagem  := 'DESEJA SAIR?'
-		cCorAlerta := 'G/N'
+		cMensagem  := 'DESEJA SAIR?'
+		cCorAlerta := 'W/R'
 		nOpcao     := Alert(cMensagem, {'SIM' , 'NAO'} , cCorAlerta)
-		
-      if nOpcao == 1
+		if nOpcao == 1
 			EXIT
 		endif
-		
-      loop
-
+		loop
 	endif
-
+	
 	do while .t.
+		@ 04,01 to 18,79
+		@ 04,01 to 06,79
+		@ 04,01 to 18,11
+		@ 04,11 to 18,35
+		@ 04,35 to 18,52
+		@ 04,52 to 18,60
+		@ 04,60 to 18,79
+		@ 04,01 to 06,79
+		@ 06,01 to 08,79
+		@ 08,01 to 10,79
+		@ 10,01 to 12,79
+		@ 12,01 to 14,79
 		
 		nQuantidade  := 0
 		nValorProd   := 0
@@ -78,6 +67,12 @@ do while .t.
 		cProduto := Space(20)
 		
 		@ nLinha += 2,06 say AllTrim(Str(nContProduto++)) 
+		
+		@ 05,04 say "ITEM"
+		@ 05,21 say "PRODUTO"
+		@ 05,40 say "QUANTIDADE"
+		@ 05,54 say "VALOR"
+		@ 05,63 say "SUB-TOTAL"
 		
 		@ nLinha,15 get cProduto    picture "@!"        valid !Empty(cProduto)
 		@ nLinha,43 get nQuantidade picture '99.99'     valid nQuantidade > 0
@@ -87,41 +82,43 @@ do while .t.
 		nSubTotal := nValorProd * nQuantidade
 		nTotal    += nSubTotal
 		
-		if nTotal > nLimite
-			cCor := 'R/W'
-		endif
-			
+		
 		@ nLinha,63 say AllTrim(Transform(nSubTotal , "@E 9,9999.99"))
-
+		
 		if nLinha > nLimiteLinha
 			InKey(0)
-			@ 06,01 clear to 18,79
-			nLinha := 05
+			@ 07,01 clear to 18,79
+			nLinha := 06
 		endif
-
+		
 		if lastkey() == 27
-			cMensagem := 'DESEJA?'
-			cCor   := 'G/N'
-			nOpcao := Alert(cMensagem, {'CONTINUAR' , 'ABANDONAR' , 'FATURAR'} , cCor)
+			cMensagem  := 'DESEJA?'
+			cCorAlerta := 'W/R'
+			
+			nOpcao := Alert(cMensagem, {'CONTINUAR' , 'ABANDONAR' , 'FATURAR'} , cCorAlerta)
 			
 			if     nOpcao == 1
 				loop
-			
 			elseif nOpcao == 2
 				EXIT
-			
-			elseif nOpcao == 3 .and. nTotal > 0
+			elseif Opcao == 3 .and. nTotal > 0
+				@ 18,01 to 24,79
 				
+				if nTotal > nLimite
+					cCor := 'R/W'
+				endif
+				
+				@ 20,04 say "FORMA DE PAGAMENTO:"
 				@ 21,04 say "TOTAL.................: " + AllTrim(Transform(nTotal , "@E 9,999.99")) color (cCor)           
 				
 				@ 03,57 get dDataEntrega picture "99/99/9999" valid !Empty(dDataPed) .AND. dDataPed >= date()
-				@ 19,24 get cFormP       picture '@!'         valid cFormP $ "VP"
+				@ 20,24 get cFormP       picture '@!'         valid cFormP $ "VP"
 				read
 				
 				if cFormP == 'P'
-					@ 19,33 say "QUANTIDADE DE PARCELAS:"
+					@ 20,33 say "QUANTIDADE DE PARCELAS:"
 	
-					@ 19,57 get nParcelas picture '99' valid nParcelas > 0 .and. nParcelas <= 10
+					@ 20,57 get nParcelas picture '99' valid nParcelas > 0 .and. nParcelas <= 10
 					read	
 						
 					nValorP := nTotal / nParcelas
@@ -132,15 +129,15 @@ do while .t.
 				endif
 
 				if lastkey() == 27 
-					cMensagem := 'DESEJA?'
-					cCor   := 'G/N'
-					nOpcao := Alert(cMensagem, {'CONTINUAR' , 'ABANDONAR'} , cCor)
+					cMensagem  := 'DESEJA?'
+					cCorAlerta := 'W/R'
+					
+					nOpcao := Alert(cMensagem, {'CONTINUAR' , 'ABANDONAR'} , cCorAlerta)
 					if nOpcao == 2
 						EXIT
 					endif
 				endif
 			InKey(0)
-			EXIT
 			endif
 		endif	
 	enddo
