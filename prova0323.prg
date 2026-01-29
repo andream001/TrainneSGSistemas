@@ -67,9 +67,10 @@ do while .t.
 
       @ 05,27 get cNomeColaborador  picture '@!'           valid !Empty(cNomeColaborador)
       @ 06,27 get cSexo             picture '@!'           valid cSexo $ 'MF'
-      @ 07,27 get dDataNascimento                          valid !Empty(dDataNascimento)
-      @ 08,27 get dDataAdmissao                            valid !Empty(dDataAdmissao)
-      @ 09,27 get dDataDemissao                            valid !Empty(dDataDemissao)
+      @ 07,27 get dDataNascimento                          valid !Empty(dDataNascimento) .AND. dDataNascimento < date()
+      @ 08,27 get dDataAdmissao                            valid !Empty(dDataAdmissao)   .AND. dDataAdmissao   > dDataNascimento
+      @ 09,27 get dDataDemissao                            valid !Empty(dDataDemissao)   .AND. dDataDemissao   > dDataAdmissao
+
       @ 10,27 get nSalarioBase      picture '@E 99,999.99' valid nSalarioBase > 0
       @ 11,27 get nLimiteIRRF       picture '@E 99,999.99' valid nLimiteIRRF  >= 0
       @ 12,27 get nAdcNoturno       picture "99"           valid nAdcNoturno  >= 0
@@ -89,9 +90,11 @@ do while .t.
          endif
       endif
       
-      nIdade             := (Date() - dDataNascimento) / 365.25
+      nIdade             := Int((Date() - dDataNascimento) / 365.25)
       nTempoContribuicao := (dDataDemissao - dDataAdmissao) / 365.25
       
+      Alert(AllTrim(str(nIdade)))
+
       if cSexo == "M"
          nTotHomens++
       else
@@ -120,7 +123,6 @@ do while .t.
          endif
       endif
       
-      
       if cSexo == "M" 
          if nTempoContribuicao >= 30 .and. nIdade >= 61
             lAptoAposentar := .T.
@@ -147,10 +149,6 @@ do while .t.
          nMulheresAposentadas++
       endif
       
-      if lPagaIRRF
-         @ 16,50 say "IRRF:9%"
-      endif
-      
       Inkey(2)
 
       @ 16,01 clear to 24,79
@@ -174,7 +172,7 @@ do while .t.
       if nTotMulheres > 0
          nPercMulheresApos := (nMulheresAposentadas/nTotMulheres) * 100
       endif
-      
+
       @ 16,02 say "HOMENS PROCESSADOS..............: " + AllTrim(Str(nTotHomens))
       @ 16,42 say "APOSENTADOS: " + AllTrim(Str(nHomensAposentados)) + " = " + AllTrim(Str(nPercHomensApos,6,1)) + "%"
       @ 17,02 say "MULHERES PROCESSADAS............: " + AllTrim(Str(nTotMulheres))
@@ -182,7 +180,7 @@ do while .t.
       @ 18,02 say "REMUNERACAO TOTAL(APOSENTADOS)..: R$ " + AllTrim(Transform(nTotRemuAposentados,"@E 999,999.99"))
       @ 19,02 say "HOMENS > 91 ANOS................: " + AllTrim(Str(nHomens91anos))
       @ 20,02 say "MULHERES ADMITIDAS ANTES DE 2013: " + AllTrim(Str(nMulheresAntes2013))
-      @ 21,02 say "MULHERES QUE PAGAM IRRF.........: " + AllTrim(Str(nMulheresPagamIRRF))
+      @ 21,02 say "MULHERES QUE PAGAM IRRF(%)......: " + AllTrim(Str((nMulheresPagamIRRF / nTotMulheres) * 100)) + "%"
 
       Inkey(0)
 

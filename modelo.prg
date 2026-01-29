@@ -1,13 +1,13 @@
 Set date BRITISH
 Set epoch to 1940
-SetColor('N/W')
+SetColor('W/N')
 
 clear
 
 do while .t.
     if lastkey() == 27
       cMensagem := 'DESEJA SAIR?'
-      cCor   := 'G/N'
+      cCor   := 'R/W'
       nOpcao := Alert(cMensagem, {'SIM' , 'NAO'} , cCor)
       if nOpcao == 1
          EXIT
