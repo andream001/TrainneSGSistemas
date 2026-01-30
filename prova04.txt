@@ -1,53 +1,216 @@
-ISTEMA DE CADASTRO DE PRODUTOS
-Objetivo Geral
-Desenvolver um sistema para o cadastro de produtos, permitindo o gerenciamento de itens e consulta de
-informações. O sistema deve ser intuitivo e apresentar mensagens claras ao usuário para cada operação.
-Módulos do Sistema
-O sistema deverá apresentar um Menu Principal que servirá como ponto de partida para todas as
-funcionalidades. As opções disponíveis no menu deverão ser as seguintes:
-1. Menu Principal
-1 - Cadastrar produto
-2 - Deletar produto
-3 - Sair do programa
-Detalhamento dos Módulos
-1. Cadastrar Produto
-Este módulo é responsável por permitir o registro de novos produtos no sistema de estoque.
-Estrutura do Produto:
-Para cada produto, as seguintes informações deverão ser armazenadas:
-ID (C/8): Identificador único do produto.
-Validações Específicas para o ID:
-Deve conter pelo menos 4 letras.
-Deve conter pelo menos 2 números.
-Não pode conter caracteres especiais.
-Não pode conter espaços em branco.
-Não pode conter caraceter em minusculo.
-Deve ter um tamanho fixo de 8 caracteres.
-Descrição (C/30): Nome ou breve descrição do produto.
-Quantidade (N/4): Quantidade atual do produto em estoque.
-Data Cadastro (D/8): Data em que o produto foi cadastrado no sistema.
-Requisitos:
-O sistema deve permitir o cadastro de novos produtos.
-Caso o ID digitado já exista no sistema, deve ser exibida a mensagem "Produto já cadastrado!" e o
-sistema deve solicitar um novo ID ao usuário.
-O sistema deve ser capaz de cadastrar quantos produtos forem necessários, sem limite predefinido.
-Todos os campos são de preenchimento obrigatório.
-2. Deletar Produto
-1 / 2
-Este módulo permite a visualização de um produto e sua subsequente remoção do sistema de cadastro.
-Requisitos:
-O sistema deverá exibir uma lista de todos os produtos cadastrados.
-Ao selecionar um produto da lista, o sistema deverá apresentar todas as informações de cadastro do
-produto (ID, Descrição, Quantidade, Data Cadastro) de forma clara e organizada.
-O sistema deverá exibir um calendário visual do mês de cadastro do produto, destacando a data exata
-do cadastro.
-Após visualizar os dados, o sistema deverá solicitar confirmação para deletar o produto.
-Se confirmado, o sistema deverá proceder com a exclusão das informações de cadastro do produto.
-3. Sair do Programa
-Requisitos:
-Ao selecionar esta opção, o sistema deverá finalizar sua execução do programa.
-Observações Gerais
-Validações: Todas as entradas de dados do usuário devem ser validadas para garantir a integridade do
-sistema e prevenir erros, seguindo as especificações de tipo (C para Caractere, N para Numérico, D para
-Data) e tamanho/formato.
-Mensagens ao Usuário: O sistema deve fornecer feedback claro e conciso ao usuário para cada
-operação, informando sobre o sucesso, falha ou a necessidade de correção de dados.
+//ANDRE LUIZ BUNHAK - SISTEMA TRADICIONAL SEM FUNÇÕES
+
+Set date BRITISH
+Set epoch to 1940
+Set Message to 23 Center
+
+LOCAL cArquivo := "produtos.dbf"
+LOCAL aEstrutura := {{"ID", "C", 8, 0}, {"DESCRICAO", "C", 30, 0}, {"QUANTIDADE", "N", 4, 0}, {"DATACADASTRO", "D", 8, 0}}
+IF !File(cArquivo)
+   DBCREATE(cArquivo, aEstrutura)
+ENDIF
+USE (cArquivo) SHARED NEW
+
+clear
+
+do while .t.
+   nOpcao := 0
+   
+   @ 03,00 to 03,79
+   @ 04,13 to 25,13
+   @ 01,00 to 24,79
+   
+   @ 02,25 say "PRODUTOS TRAINEE SG SISTEMAS"
+   
+   @ 04,02 prompt "CADASTRAR" Message "CADASTRA UM NOVO PRODUTO"
+   @ 05,02 prompt "DELETAR"   Message "DELETA UM PRODUTO EXISTENTE"
+   @ 06,02 prompt "SAIR"      Message "SAIR DO PROGRAMA"
+   
+   menu to nOpcao
+   
+   if nOpcao == 1
+      // BLOCO CADASTRO INLINE - INFINITO
+      do while .t.
+         @ 04,14 clear to 23,78
+         
+         cIDPRODUTO := Space(8)
+         cDescricao := Space(30)
+         nQuantidade := 0
+         dDataCadastro := Ctod("  /  /  ")
+         
+         @ 04,15 say "ID (8 CARACTERES):"
+         @ 05,15 say "DESCRICAO........:"
+         @ 06,15 say "QUANTIDADE.......:"
+         @ 07,15 say "DATA DE CADASTRO.:"
+         
+         @ 04,34 get cIDPRODUTO picture "@!"  
+         @ 05,34 get cDescricao picture "@S30"  
+         @ 06,34 get nQuantidade picture "9999"  
+         @ 07,34 get dDataCadastro picture "@D" 
+         read
+         
+         if LastKey() == 27
+            cMensagem := 'DESEJA SAIR?'
+            cCor := 'W/R'
+            nOpcaoSair := Alert(cMensagem, {'SIM','NAO'}, cCor)
+            if nOpcaoSair == 1
+               EXIT
+            endif
+            loop
+         endif
+         
+         // VALIDAÇÕES ID COM IF PUROS + LOOP
+         if Len(AllTrim(cIDPRODUTO)) != 8
+            @ 09,15 say "ERRO: 8 EXATOS!" COLOR "R/W*"
+            Inkey(2)
+            loop
+         endif
+         if " " $ cIDPRODUTO
+            @ 09,15 say "ERRO: SEM ESPAÇO!" COLOR "R/W*"
+            Inkey(2)
+            loop
+         endif
+         nLetras := 0
+         nNums := 0
+         lInvalido := .F.
+         FOR i := 1 TO 8
+            cChar := SubStr(cIDPRODUTO, i, 1)
+            if cChar >= "A" .AND. cChar <= "Z"
+               nLetras := nLetras + 1
+            elseif cChar >= "0" .AND. cChar <= "9"
+               nNums := nNums + 1
+            else
+               lInvalido := .T.
+            endif
+         NEXT
+         if lInvalido
+            @ 09,15 say "ERRO: SÓ A-Z 0-9!" COLOR "R/W*"
+            Inkey(2)
+            loop
+         endif
+         if nLetras < 4 .OR. nNums < 2
+            @ 09,15 say "ERRO: 4+LET 2+NUM!" COLOR "R/W*"
+            Inkey(2)
+            loop
+         endif
+         if Empty(cDescricao) .OR. nQuantidade < 1 .OR. Empty(dDataCadastro)
+            @ 09,15 say "ERRO: CAMPOS VAZIOS!" COLOR "R/W*"
+            Inkey(2)
+            loop
+         endif
+         
+         // DUPLICATA
+         SEEK AllTrim(cIDPRODUTO)
+         if FOUND()
+            @ 09,15 say "JÁ CADASTRADO!" COLOR "R/W*"
+            Inkey(2)
+            loop
+         endif
+         
+         // SALVA INFINITO
+         APPEND BLANK
+         REPLACE ID WITH AllTrim(cIDPRODUTO)
+         REPLACE DESCRICAO WITH AllTrim(cDescricao)
+         REPLACE QUANTIDADE WITH nQuantidade
+         REPLACE DATACADASTRO WITH dDataCadastro
+         COMMIT
+         @ 09,15 say "CADASTRADO OK!" COLOR "G/W*"
+         Inkey(2)
+         EXIT  // Sai após sucesso ou ESC
+      enddo
+      
+   elseif nOpcao == 2
+      // BLOCO DELETAR INLINE - LISTA COM PROMPT
+      do while .t.
+         @ 04,14 clear to 23,78
+         
+         // CONTA REGISTROS
+         nRecs := 0
+         GO TOP
+         DO WHILE !EOF()
+            nRecs := nRecs + 1
+            SKIP
+         ENDDO
+         if nRecs == 0
+            @ 10,20 say "SEM PRODUTOS!" COLOR "R/W*"
+            Inkey(2)
+            EXIT
+         endif
+         
+         // MENU LISTA DINÂMICO COM PROMPT
+         @ 06,15 say "ESCOLHA PARA DELETAR:"
+         nEscolhido := 1
+         DO WHILE .T.
+            @ 08,15 CLEAR TO 22,78
+            GO TOP
+            FOR i := 1 TO nRecs
+               SKIP ALIAS  // Avança sem EOF check aqui
+               if RecNo() == i
+                  cLinha := PadL(AllTrim(ID) + " - " + Left(DESCRICAO,20) + " Q:" + Str(QUANTIDADE), 50)
+                  @ 07 + (i % 12), 16 PROMPT cLinha MESSAGE "Deletar " + AllTrim(ID)
+               endif
+            NEXT
+            MENU TO nEscolhido
+            if nEscolhido == 0 .OR. LastKey() == 27
+               EXIT
+            endif
+            EXIT  // Saiu do menu
+         ENDDO
+         if LastKey() == 27
+            EXIT
+         endif
+         
+         // DETALHES DO ESCOLHIDO
+         GO nEscolhido
+         @ 04,14 CLEAR TO 23,78
+         @ 04,25 SAY Pad("ID: " + ID + "     ",30)
+         @ 05,25 SAY Pad("DESC: " + DESCRICAO,30)
+         @ 06,25 SAY Pad("QTD: " + Str(QUANTIDADE),30)
+         @ 07,25 SAY Pad("DATA: " + DToC(DATACADASTRO),30)
+         
+         // CALENDÁRIO MANUAL SEM FUNÇÃO
+         nAnoM := Year(DATACADASTRO)
+         nMesM := Month(DATACADASTRO)
+         nDiaM := Day(DATACADASTRO)
+         nDiasM := 31
+         if nMesM == 4 .OR. nMesM == 6 .OR. nMesM == 9 .OR. nMesM == 11
+            nDiasM := 30
+         elseif nMesM == 2
+            nDiasM := 28
+            if (nAnoM % 4 == 0 .AND. nAnoM % 100 != 0) .OR. nAnoM % 400 == 0
+               nDiasM := 29
+            endif
+         endif
+         nDiaSemM := 1  // Simples aprox
+         @ 09,15 SAY "CALENDÁRIO " + Str(nMesM) + "/" + Str(nAnoM)
+         @ 10,15 SAY "DOM SEG TER QUA QUI SEX SAB"
+         cCal := Space(4 * 7)
+         FOR j := 1 TO nDiasM
+            nPos := ((j-1) % 7) * 4 + 1
+            IF j == nDiaM
+               SubStr(cCal, nPos, 2) := "[" + StrZero(j,1) + "]"
+            ELSE
+               SubStr(cCal, nPos, 2) := StrZero(j,2)
+            ENDIF
+         NEXT
+         @ 11,15 SAY Left(cCal,28)
+         
+         // CONFIRMA
+         cMensagem := 'DELETAR ' + ID + '?'
+         nConf := Alert(cMensagem, {'SIM','NÃO'}, 'W/R')
+         if nConf == 1
+            GO nEscolhido
+            DELETE
+            PACK
+            COMMIT
+            @ 20,20 SAY "DELETADO!" COLOR "G/W*"
+         endif
+         Inkey(3)
+         EXIT
+      enddo
+      
+   endif  // Fim elseif nOpcao==2
+enddo  // Fim menu principal
+
+USE
+InKey(0)
