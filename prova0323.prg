@@ -1,7 +1,7 @@
 //ANDRE LUIZ BUNHAK
 
 Set date BRITISH
-Set epoch to 1940
+//Set epoch to 1940
 SetColor('N/W')
 
 clear
@@ -42,7 +42,7 @@ do while .t.
       cNomeColaborador  := Space(30)
       cSexo             := Space(1)
       
-      dDataNascimento   := CToD("")
+      dDataNascimento   := CToD("29/01/0568")
       dDataAdmissao     := CToD("")
       dDataDemissao     := CToD("")
       
@@ -67,9 +67,9 @@ do while .t.
 
       @ 05,27 get cNomeColaborador  picture '@!'           valid !Empty(cNomeColaborador)
       @ 06,27 get cSexo             picture '@!'           valid cSexo $ 'MF'
-      @ 07,27 get dDataNascimento                          valid !Empty(dDataNascimento) .AND. dDataNascimento < date()
-      @ 08,27 get dDataAdmissao                            valid !Empty(dDataAdmissao)   .AND. dDataAdmissao   > dDataNascimento
-      @ 09,27 get dDataDemissao                            valid !Empty(dDataDemissao)   .AND. dDataDemissao   > dDataAdmissao
+     // @ 07,27 get dDataNascimento                         // valid !Empty(dDataNascimento) .AND. dDataNascimento < date()
+     // @ 08,27 get dDataAdmissao                           // valid !Empty(dDataAdmissao)   .AND. dDataAdmissao   > dDataNascimento
+     // @ 09,27 get dDataDemissao                           // valid !Empty(dDataDemissao)   .AND. dDataDemissao   > dDataAdmissao
 
       @ 10,27 get nSalarioBase      picture '@E 99,999.99' valid nSalarioBase > 0
       @ 11,27 get nLimiteIRRF       picture '@E 99,999.99' valid nLimiteIRRF  >= 0

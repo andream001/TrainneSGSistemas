@@ -6,9 +6,11 @@ do while .t.
    clear
    
    nOpcao := 0
-    
+   
    @ 01,00 to 06,79
-
+   
+   @ 01,38 say "MENU"
+   
    @ 02,01 prompt "EXERCICIO 7" Message "FAZ A LEITURA DE 2 VALORES E RETORNA O RESULTADO DAS 4 OPERACOES BASICAS"
    @ 03,01 prompt "EXERCICIO 8" Message "MERCADO"
    @ 04,01 prompt "EXERCICIO 9" Message "LE 1 LETRA, 1 DATA, 1 NUMERO INTEIRO, 1 NUMERO COM CASAS DECIMAIS E 1 STRING"
@@ -159,24 +161,24 @@ do while .t.
                      cCor := 'R/W'
                   endif
                   
-                  @ 20,04 say "FORMA DE PAGAMENTO:"
-                  @ 22,04 say "TOTAL.................: " + AllTrim(Transform(nTotal , "@E 9,999.99")) color (cCor)           
+                  @ 20,04 say "FORMA DE PAGAMENTO....:"
+                  @ 22,04 say "TOTAL.................: R$ " + AllTrim(Transform(nTotal , "@E 9,999.99")) color (cCor)           
                   
                   @ 03,57 get dDataEntrega picture "99/99/9999" valid !Empty(dDataPed) .AND. dDataPed >= date()
-                  @ 20,24 get cFormP       picture '@!'         valid cFormP $ "VP"
+                  @ 20,28 get cFormP       picture '@!'         valid cFormP $ "VP"
                   read
                   
                   InKey(0)
                   if cFormP == 'P'
-                     @ 20,33 say "QUANTIDADE DE PARCELAS:"
+                     @ 21,04 say "QUANTIDADE DE PARCELAS:"
                      
-                     @ 20,57 get nParcelas picture '99' valid nParcelas > 0 .and. nParcelas <= 10
+                     @ 21,27 get nParcelas picture '99' valid nParcelas > 0 .and. nParcelas <= 10
                      read	
                         
                      nValorP := nTotal / nParcelas
                            
                      if nParcelas > 0
-                        @ 23,04 say "VALOR DA PARCELA......: " + AllTrim(Transform(nValorP , "@!E")) color (cCor)
+                        @ 23,04 say "VALOR DA PARCELA......: R$ " + AllTrim(Transform(nValorP , "@!E")) color (cCor)
                         InKey(0)
                      endif
                   endif

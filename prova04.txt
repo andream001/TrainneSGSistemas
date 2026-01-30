@@ -1,0 +1,53 @@
+ISTEMA DE CADASTRO DE PRODUTOS
+Objetivo Geral
+Desenvolver um sistema para o cadastro de produtos, permitindo o gerenciamento de itens e consulta de
+informações. O sistema deve ser intuitivo e apresentar mensagens claras ao usuário para cada operação.
+Módulos do Sistema
+O sistema deverá apresentar um Menu Principal que servirá como ponto de partida para todas as
+funcionalidades. As opções disponíveis no menu deverão ser as seguintes:
+1. Menu Principal
+1 - Cadastrar produto
+2 - Deletar produto
+3 - Sair do programa
+Detalhamento dos Módulos
+1. Cadastrar Produto
+Este módulo é responsável por permitir o registro de novos produtos no sistema de estoque.
+Estrutura do Produto:
+Para cada produto, as seguintes informações deverão ser armazenadas:
+ID (C/8): Identificador único do produto.
+Validações Específicas para o ID:
+Deve conter pelo menos 4 letras.
+Deve conter pelo menos 2 números.
+Não pode conter caracteres especiais.
+Não pode conter espaços em branco.
+Não pode conter caraceter em minusculo.
+Deve ter um tamanho fixo de 8 caracteres.
+Descrição (C/30): Nome ou breve descrição do produto.
+Quantidade (N/4): Quantidade atual do produto em estoque.
+Data Cadastro (D/8): Data em que o produto foi cadastrado no sistema.
+Requisitos:
+O sistema deve permitir o cadastro de novos produtos.
+Caso o ID digitado já exista no sistema, deve ser exibida a mensagem "Produto já cadastrado!" e o
+sistema deve solicitar um novo ID ao usuário.
+O sistema deve ser capaz de cadastrar quantos produtos forem necessários, sem limite predefinido.
+Todos os campos são de preenchimento obrigatório.
+2. Deletar Produto
+1 / 2
+Este módulo permite a visualização de um produto e sua subsequente remoção do sistema de cadastro.
+Requisitos:
+O sistema deverá exibir uma lista de todos os produtos cadastrados.
+Ao selecionar um produto da lista, o sistema deverá apresentar todas as informações de cadastro do
+produto (ID, Descrição, Quantidade, Data Cadastro) de forma clara e organizada.
+O sistema deverá exibir um calendário visual do mês de cadastro do produto, destacando a data exata
+do cadastro.
+Após visualizar os dados, o sistema deverá solicitar confirmação para deletar o produto.
+Se confirmado, o sistema deverá proceder com a exclusão das informações de cadastro do produto.
+3. Sair do Programa
+Requisitos:
+Ao selecionar esta opção, o sistema deverá finalizar sua execução do programa.
+Observações Gerais
+Validações: Todas as entradas de dados do usuário devem ser validadas para garantir a integridade do
+sistema e prevenir erros, seguindo as especificações de tipo (C para Caractere, N para Numérico, D para
+Data) e tamanho/formato.
+Mensagens ao Usuário: O sistema deve fornecer feedback claro e conciso ao usuário para cada
+operação, informando sobre o sucesso, falha ou a necessidade de correção de dados.
