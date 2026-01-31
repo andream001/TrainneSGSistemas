@@ -1,4 +1,4 @@
-//ANDRE LUIZ BUNHAK
+//ANDRE LUIZ BUNHAK - SISTEMA FINAL COMPLETO
 
 Set date BRITISH
 Set epoch to 1940
@@ -7,24 +7,20 @@ Set Message to 23 Center
 clear
 
 nQuantidadedeProdutos := 0
-
-cItem        := ""
 cProdutos    := ""
 cDescricoes  := ""
 cQuantidades := ""
-
-
 cDATACADASTRO := ""
+cItem        := ""
 
 do while .t.
-
-   nOpcao    := 0
+   nOpcao := 0
 
    @ 03,00 to 03,79
    @ 04,13 to 25,13
    @ 01,00 to 24,79
 
-   @ 02,25 say "PRODUTOS TRAINNE SG SISTEMAS"
+   @ 02,25 say "PRODUTOS TRAINEE SG SISTEMAS"
 
    @ 04,02 prompt "CADASTRAR" Message "CADASTRA UM NOVO PRODUTO"
    @ 05,02 prompt "DELETAR"   Message "DELETA UM PRODUTO EXISTENTE"
@@ -38,54 +34,50 @@ do while .t.
 
          cIDPRODUTO := Space(8)
          cDescricao := Space(30)
-
          nQuantidade := 0
+         dDataCadastro := Ctod("  /  /  ")
 
-         dData         := date()
-         dDataCadastro := Ctod(" ")
-
-         @ 04,15 say "ID (8 CARACTERES):"
+         @ 04,15 say "ID (8 MAIÚSC >=4LET >=2NUM):"
          @ 05,15 say "DESCRICAO........:"
          @ 06,15 say "QUANTIDADE.......:"
          @ 07,15 say "DATA DE CADASTRO.:"
 
-         @ 04,34 get cIDPRODUTO   picture "@!"   valid !Empty(cIDPRODUTO) .AND. Len(cIDPRODUTO) == 8 //.AND. cIDPRODUTO !$ " "
-         @ 05,34 get cDescricao   picture "@!"   //valid !Empty(cDescricao)
-         @ 06,34 get nQuantidade  picture "9999" //valid nQuantidade > 0
-         @ 07,34 get dDataCadastro               //valid !Empty(dDataCadastro) .AND. dDataCadastro >= date()
+         @ 04,34 get cIDPRODUTO picture "@!"  
+         @ 05,34 get cDescricao picture "@S30"  
+         @ 06,34 get nQuantidade picture "9999"  
+         @ 07,34 get dDataCadastro picture "@D" 
          read
 
-         cDescricoes   += ALLTRIM(cDescricao) + " "
-         cQuantidades  += ALLTRIM(TRANSFORM(nQuantidade, "9999")) + " "
-         cDATACADASTRO += Dtoc(dDataCadastro) + " "
-
-         if lastkey() == 27
+         if LastRec() == 27
             cMensagem := 'DESEJA SAIR?'
-            cCor   := 'W/R'
-            nOpcao := Alert(cMensagem, {'SIM' , 'NAO'} , cCor)
-            if nOpcao == 1
+            nOpcaoSair := Alert(cMensagem, {'SIM','NAO'}, 'W/R')
+            if nOpcaoSair == 1
                EXIT
             endif
-         endif
-
-         if Len(Alltrim(cIDPRODUTO)) != 8
-            Alert("O ID DEVE CONTER EXATAMENTE 8 CARACTERES", "W/R")
             loop
          endif
 
+         // VALIDA CAMPOS OBRIGATÓRIOS
+         if Empty(AllTrim(cIDPRODUTO)) .or. Empty(AllTrim(cDescricao)) .or. nQuantidade < 1 .or. Empty(dDataCadastro)
+            Alert("TODOS OS CAMPOS SAO OBRIGATORIOS!", "W/R")
+            loop
+         endif
+
+         // SUAS VALIDAÇÕES ID (PERFEITAS)
+         if Len(AllTrim(cIDPRODUTO)) != 8
+            Alert("ID DEVE TER EXATAMENTE 8 CARACTERES", "W/R")
+            loop
+         endif
          if " " $ cIDPRODUTO
-            Alert("NAO PODE CONTER ESPACOS EM BRANCO", "W/R")
+            Alert("NAO PODE ESPAÇOS EM BRANCO", "W/R")
             loop
          endif
-
-         nLetras   := 0
-         nNums     := 0
+         nLetras := 0
+         nNums := 0
          nContador := 0
-
          lInvalido := .f.
-
          do while nContador < Len(cIDPRODUTO)
-            cChar := SubStr(cIDPRODUTO, nContador++,1)
+            cChar := SubStr(cIDPRODUTO, nContador++ + 1, 1)
             if cChar >= "A" .AND. cChar <= "Z"
                nLetras += 1
             elseif cChar >= "0" .AND. cChar <= "9"
@@ -94,80 +86,121 @@ do while .t.
                lInvalido := .t.
             endif
          enddo
-
          if lInvalido
-            Alert("PERMITIDO APENAS LETRAS E NUMEROS" , "W/R")
+            Alert("APENAS LETRAS MAIÚSCULAS E NÚMEROS", "W/R")
+            loop
+         endif
+         if nLetras < 4 .OR. nNums < 2
+            Alert("MINIMO: 4 LETRAS MAIÚSCULAS + 2 NÚMEROS", "W/R")
             loop
          endif
 
-         if nLetras < 5 .OR. nNums < 2
-            Alert("O ID DEVE CONTER NO MINIMO 4 LETRAS E 2 NUMEROS")
-            loop
-         endif
-
+         // VERIFICA DUPLICATA
          if cIDPRODUTO $ cProdutos
-            Alert("ID JA CADASTRADO" , "W/R")
+            Alert("PRODUTO JÁ CADASTRADO!", "W/R")
             loop
          endif
 
-         cProdutos += cIDPRODUTO
-         cItem     += " " + nQuantidadedeProdutos
+         // ARMAZENA
+         cProdutos += cIDPRODUTO + " "
+         cDescricoes += AllTrim(cDescricao) + " "
+         cQuantidades += AllTrim(Str(nQuantidade)) + " "
+         cDATACADASTRO += DToC(dDataCadastro) + " "
+         cItem += Str(nQuantidadedeProdutos + 1) + " "
          nQuantidadedeProdutos++
 
-         Alert("PRODUTO CADASTRADO COM SUCESSO", "W/G")
-         Alert(cProdutos + " " + cItem + ' ' + cQuantidades + " " + cDATACADASTRO + cDescricoes)
+         Alert("PRODUTO CADASTRADO!", "W/G")
+         EXIT  // SAI APÓS SUCESSO
       enddo
+
    elseif nOpcao == 2
-      @ 04,15 clear to 23,25
+      // DELETAR - LISTA + CALENDÁRIO + CONFIRMAÇÃO
+      if nQuantidadedeProdutos == 0
+         Alert("NENHUM PRODUTO CADASTRADO!", "W/R")
+         loop
+      endif
+
       do while .t.
-         nLinha      := 4
-         nBuscadorID := 1
+         @ 04,14 clear to 23,78
+         ? @ 05,15 say "LISTA PRODUTOS (escolha para DELETAR):"
 
-         do while .t.
-            @ 04,25 to 23,25
+         // MENU COM TODOS PRODUTOS
+         nEscolhido := 0
+         nPosID := 1
+         for i := 1 to nQuantidadedeProdutos
+            cLinhaLista := SubStr(cProdutos, nPosID, 8) + " - " + ;
+                          SubStr(cDescricoes, 1, 20) + " Q:" + ;
+                          SubStr(cQuantidades, 1, 4)
+            @ 07 + i, 16 PROMPT cLinhaLista
+            nPosID := nPosID + 9  // Pula espaço
+         next
+         menu to nEscolhido
+         
+         if nEscolhido == 0 .or. LastKey() == 27
+            EXIT
+         endif
 
-            nMenu := 0
+         // MOSTRA DETALHES DO ESCOLHIDO
+         @ 04,14 clear to 23,78
+         nPosID := (nEscolhido - 1) * 9 + 1
+         @ 05,20 say "PRODUTO SELECIONADO:"
+         @ 07,20 say "ID: " + SubStr(cProdutos, nPosID, 8)
+         @ 08,20 say "DESC: " + AllTrim(SubStr(cDescricoes, (nEscolhido-1)*31 + 1, 30))
+         @ 09,20 say "QTD: " + SubStr(cQuantidades, (nEscolhido-1)*6 + 1, 4)
+         @ 10,20 say "DATA: " + SubStr(cDATACADASTRO, (nEscolhido-1)*11 + 1, 10)
 
-            @ nLinha,15 prompt SubStr(cProdutos,nBuscadorID,8)
+         // CALENDÁRIO SIMPLES DO MÊS
+         @ 12,15 say "CALENDARIO DO MES:"
+         @ 13,15 say "DOM SEG TER QUA QUI SEX SAB"
+         dDataSel := Ctod(SubStr(cDATACADASTRO, (nEscolhido-1)*11 + 1, 10))
+         nMes := Month(dDataSel)
+         nDiaSel := Day(dDataSel)
+         for j := 1 to 30  // 30 dias genérico
+            cDia := iif(j == nDiaSel, "[" + StrZero(j,2) + "]", StrZero(j,2))
+            @ 14 + Int((j-1)/7), 15 + Mod((j-1),7)*5 say cDia
+         next
 
-            menu to nMenu
-
-            nLinha++
-            nBuscadorID += 8
-
-            if nMenu $ cItem
-               @ 04,25 clear to 23,79
-
-               @ 04,27 say "ID (8 CARACTERES): " + SubStr(cProdutos,nBuscadorID,8)
-               @ 05,27 say "DESCRICAO........: " + AllTrim(SubStr(cDescricoes,1,30))
-               @ 06,27 say "QUANTIDADE.......: " + AllTRIM(SubStr(cQuantidade,1,4))
-               @ 07,27 say "DATA DE CADASTRO.: " + Dtoc(dDataCadastro)
-
-               if lastkey() == 27
-               cMensagem := 'DESEJA SAIR?'
-               cCor   := 'W/R'
-               nOpcao := Alert(cMensagem, {'SIM' , 'NAO'} , cCor)
-                  if nOpcao == 1
-                     EXIT
-                  endif
-
+         // CONFIRMA DELETE
+         cMsgDelete := "DELETAR " + SubStr(cProdutos, nPosID, 8) + "?"
+         nConf := Alert(cMsgDelete, {'SIM','NAO'}, 'W/R')
+         if nConf == 1
+            // REMOVE DA STRING (SIMULA DELETE)
+            cNovosProdutos := ""
+            cNovasDesc := ""
+            cNovasQtd := ""
+            cNovasData := ""
+            nNovaQtde := 0
+            nPosNova := 1
+            for k := 1 to nQuantidadedeProdutos
+               if k != nEscolhido
+                  nNovaQtde++
+                  cNovosProdutos += SubStr(cProdutos, nPosNova, 8) + " "
+                  cNovasDesc += SubStr(cDescricoes, nPosNova, 30) + " "
+                  cNovasQtd += SubStr(cQuantidades, nPosNova, 6) + " "
+                  cNovasData += SubStr(cDATACADASTRO, nPosNova, 11) + " "
                endif
-            endif
-         enddo
+               nPosNova := nPosNova + 9
+            next
+            cProdutos := cNovosProdutos
+            cDescricoes := cNovasDesc
+            cQuantidades := cNovasQtd
+            cDATACADASTRO := cNovasData
+            nQuantidadedeProdutos := nNovaQtde
+            Alert("PRODUTO DELETADO!", "W/G")
+         else
+            Alert("CANCELADO", "W/BG")
+         endif
+         Inkey(2)
+         EXIT
       enddo
-
 
    elseif nOpcao == 3
       cMensagem := 'DESEJA SAIR?'
-      cCor   := 'R/W'
-      nOpcao := Alert(cMensagem, {'SIM' , 'NAO'} , cCor)
-      if nOpcao == 1
+      nSair := Alert(cMensagem, {'SIM','NAO'}, 'R/W')
+      if nSair == 1
          EXIT
       endif
       loop
    endif
-
-
-
 enddo
 InKey(0)
