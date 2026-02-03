@@ -185,16 +185,6 @@ do while .t.
             @ nLinhaGet,22 get nQuantidadeProd picture "9999.99" valid nQuantidadeProd > 0
             read
          
-            if nCODProduto == 1100
-               nEstoqueJaca -= nQuantidadeProd
-            elseif nCODProduto == 4544
-               nEstoqueUva -= nQuantidadeProd
-            elseif nCODProduto == 3515
-               nEstoqueTangerina -= nQuantidadeProd
-            else
-               nEstoqueAbacate -= nQuantidadeProd
-            endif
-         
             
             if lastkey() == 27
                cMensagem  := 'O QUE DESEJA FAZER'
@@ -211,7 +201,7 @@ do while .t.
                   exit
                endif
             endif
-
+            
             if nQuantidadeProd > nEstoque
                Alert("QUANTIDADE MAIOR QUE ESTOQUE ATUAL", cCorAlerta)
                @ nLinhaGet,02 clear to nLinhaGet,78
@@ -237,7 +227,7 @@ do while .t.
                   loop
                endif
             endif
-
+            
             if nDesconto > nDescontoMaximo
                Alert("DESCONTO MAIOR QUE O PERMITIDO PARA O PRODUTO", cCorAlerta)
                @ nLinhaGet,02 clear to nLinhaGet,78
@@ -261,10 +251,21 @@ do while .t.
             nCODProduto     := 0
             nDesconto       := 0
             nQuantidadeProd := 0
-
+            
+            if nCODProduto == 1100
+               nEstoqueJaca -= nQuantidadeProd
+            elseif nCODProduto == 4544
+               nEstoqueUva -= nQuantidadeProd
+               Alert(nEstoqueUva)
+            elseif nCODProduto == 3515
+               nEstoqueTangerina -= nQuantidadeProd
+            else
+               nEstoqueAbacate -= nQuantidadeProd
+            endif
          enddo
       enddo
    endif
+
    
    if nOpcao == 2
       Alert("SAINDO...", cCorAlerta)
