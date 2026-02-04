@@ -31,16 +31,20 @@ do while .t.
    cTipo := Space(1)
 
    nQuantidadePagamento := 0
+   
+   nDesconto := 0
 
-   nTaxadeEntrega   := 1
-   nOrdemdeServico  := 1
-   nLimiteCredito   := 0
-   nControleLinha   := 8
-   nValorTotal      := 0
-   nPrecoUnitario   := 0
-   nPrecoTotal      := 0
-   nQuantidade      := 0
-   nComissaoTecnico := 0
+   nTaxadeEntrega    := 0
+   nOrdemdeServico   := 1000
+   nLimiteCredito    := 0
+   nControleLinha    := 8
+   nValorTotal       := 0
+   nValorComGarantia := 0
+   nPrecoUnitario    := 0
+   nPrecoTotal       := 0
+   nQuantidade       := 0
+   nComissaoTecnico  := 0
+   nDesconto         := 0
   
    dDataOrdemServico := CToD("")
    dDataCompra       := CToD("")
@@ -140,12 +144,12 @@ do while .t.
             
             @ 11,01 to 11,78
          
-            if nValorTotal > nLimiteCredito
+if nValorComGarantia > nLimiteCredito
                
                cSupervisor      := Space(15)
                cSenhaSupervisor := Space(15)
                
-               Alert("SUPERVISOR", {"SIM" , "CANCELAR" } , cCorAlerta)
+               Alert("LIMITE EXCEDIDO - SUPERVISOR", {"SIM" , "CANCELAR" } , cCorAlerta)
                @ 22,22 say "SUPERVISOR SOLICITADO:"
                @ 23,22 say "SENHA SUPERVISOR.....:"
                
@@ -164,7 +168,6 @@ do while .t.
                if cSenhaSupervisor != "AUTORIZA99"
                   Alert("SENHA INCORRETA",cCorAlerta)
                   loop
-                  @ 22,01 clear to 23,78
                endif
             endif
             
@@ -186,7 +189,7 @@ do while .t.
                   read
                   
                   if lastkey() == 27
-                     cMensagem := 'DESEJA SAIR?'
+                     cMensagem := 'DESEJA FINALIZAR?'
                      nOpcao := Alert(cMensagem, {'SIM' , 'NAO'} , cCorAlerta)
                      if nOpcao == 1
                         EXIT
@@ -194,11 +197,21 @@ do while .t.
                      loop
                   endif
             
-                  nValorTotal := (nPrecoUnitario * nQuantidade)
+                  nValorTotal := (nPrecoUnitario * nQuantidade) - ((nPrecoUnitario * nQuantidade) * (nDesconto / 100))
                   
-                  @ 22,01 say "VALOR TOTAL: R$ " + Alltrim(Transform(nValorTotal, "@E 9,999,999.99"))
+                 
+                  nIdadeProduto := Year(dDataCompra) 
+                  nIdadeAtual := Year(Date())
+                  nDiferencaAnos := nIdadeAtual - nIdadeProduto
+                  
+                  if nDiferencaAnos <= 2
+                     nValorComGarantia := 0
+                  else
+                     nValorComGarantia := nValorTotal
+                  endif
+                  
+                  @ 22,01 say "VALOR TOTAL: R$ " + Alltrim(Transform(nValorTotal, "@E 9,999,999.99")) + "  |  COM GARANTIA: R$ " + Alltrim(Transform(nValorComGarantia, "@E 9,999,999.99"))
                   nOrdemdeServico++
-                  Inkey(0)
                enddo
             elseif cTipo == "S"
                do while .t.
@@ -206,18 +219,26 @@ do while .t.
                   @ 09,01 clear to 11,78
                   
                   @ 09,01 say "DESCRICAO DO SERVICO:"
-                  @ 09,50 say "DESCONTO(%):"
-                  @ 10,01 say "COMISSAO TECNICO(%).:"
+                  @ 09,50 say "PRECO:R$ "
+                  @ 10,01 say "DESCONTO(%):"
+                  @ 10,50 say "COMISSAO TECNICO(%):"
                   
                   @ 09,25 get cDescricaoServico picture "@!"    valid !Empty(cDescricaoServico)
-                  @ 09,61 get nDesconto         picture "99.99" valid nDesconto        >= 0
-                  @ 10,25 get nComissaoTecnico  picture "99.99" valid nComissaoTecnico >= 0
+                  @ 09,59 get nPrecoTotal       picture "@E 9,999,999.99" valid nPrecoTotal > 0
+                  @ 10,25 get nDesconto         picture "99.99" valid nDesconto        >= 0
+                  @ 10,65 get nComissaoTecnico  picture "99.99" valid nComissaoTecnico >= 0
                   read
                   
-                  nValorTotal += (nValorTotal * nComissaoTecnico)
-                  nPrecoTotal -= nValorTotal * (nDesconto / 100)
-
+                  nValorTotal := nPrecoTotal - (nPrecoTotal * (nDesconto / 100))
                   
+                  nIdadeServico := MONTH(Date()) - MONTH(dDataCompra)
+                  
+                  if nIdadeServico <= 12
+                     nValorComGarantia := 0
+                  else
+                     nValorComGarantia := nValorTotal
+                  endif
+
                   @ 11,01 to 11,78
 
                   if lastkey() == 27
@@ -227,24 +248,54 @@ do while .t.
                         EXIT
                      elseif nOpcao == 2
                         
-                        nContador := 0
-
-                        @ 12,01 say "FORMA DE PAGAMENTO:   (DINHEIRO,CHEQUE OU CARTAO DE CREDITO)"
-
-                        @ 12,21 get cFormaPagamento picture "@!" valid !Empty(cFormaPagamento)
-                        read
+                        if nValorComGarantia == 0
+                           @ 12,01 clear to 23,78
+                           @ 12,01 say "GARANTIA COBRE TODO O CONSERTO - NOTA FISCAL NECESSARIA"
+                           @ 14,01 say "CNPJ EMPRESA.:"
+                           @ 15,01 say "NUMERO NOTA.:"
+                           @ 16,01 say "DATA NOTA...:"
+                           
+                           cCNPJ := Space(14)
+                           cNumeroNota := Space(10)
+                           dDataNota := CToD("")
+                           
+                           @ 14,20 get cCNPJ       picture "99.999.999/0001-99" valid !Empty(cCNPJ)
+                           @ 15,20 get cNumeroNota picture "9999999999" valid !Empty(cNumeroNota)
+                           @ 16,20 get dDataNota                     valid dDataNota >= Date()
+                           read
+                           
+                           Alert("NOTA FISCAL REGISTRADA", {"OK"}, cCorAlerta)
+                        else
+                           @ 12,01 clear to 13,78
+                           @ 12,01 say "FORMA DE PAGAMENTO: (D)INHEIRO, (C)HEQUE OU (T)CARTAO"
+                           
+                           cFormaPagamento := Space(1)
+                           @ 12,51 get cFormaPagamento picture "@!" valid cFormaPagamento $ "DCT"
+                           read
+                           
+                           nTotalPago := 0
+                           
+                           do while nTotalPago < nValorComGarantia
+                              nValorPago := 0
+                              @ 13,01 clear to 13,78
+                              @ 13,01 say "VALOR A PAGAR: R$ " + Alltrim(Transform(nValorComGarantia - nTotalPago, "@E 9,999,999.99")) + "  |  VALOR: R$ "
+                              @ 13,51 get nValorPago picture "@E 9,999,999.99" valid nValorPago > 0
+                              read
+                              
+                              nTotalPago += nValorPago
+                           enddo
+                        endif
+      
+                        nComissaoTotal := nValorTotal * (nComissaoTecnico / 100)
+                        @ 17,01 say "COMISSAO DO TECNICO: R$ " + Alltrim(Transform(nComissaoTotal, "@E 9,999,999.99"))
                         
-                        do while nQuantidadePagamento > nContador
-                           if cFormaPagamento == 'DINHEIRO'
-                              @ 13,01 say "PAGAMENTO EM DINHEIRO:R$ " + Alltrim(Transform(nPrecoTotal, "@E 9,999,999.99"))
-                           elseif cFormaPagamento == 'CHEQUE' 
-                     
-                     
+                        Inkey(0)
+                        EXIT
+                     endif
                   endif
                   
-                  @ 22,01 say "PRECO TOTAL:R$ " + Alltrim(Transform(nPrecoTotal, "@E 9,999,999.99"))
+                  @ 22,01 say "VALOR TOTAL: R$ " + Alltrim(Transform(nValorTotal, "@E 9,999,999.99")) + "  |  COM GARANTIA: R$ " + Alltrim(Transform(nValorComGarantia, "@E 9,999,999.99"))
                   nOrdemdeServico++
-                  Inkey(0)
                   
                enddo
             endif
