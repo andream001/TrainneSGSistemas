@@ -31,8 +31,7 @@ do while .t.
 
       nPontuacao      := 0
       nControleLinha  := 5
-      nControleColuna := 5
-
+      nControleColuna := 0
       cJogador := Space(30)
       
       @ 03,02 say "NOME: "
@@ -52,18 +51,20 @@ do while .t.
       Alert("O JOGO VAI COMECAR. FIQUE ATENTO!" , cCorAlerta)
    
       nJogada          := 0
-      nControleJogadas := 1
+      nControleJogadas := 10
       
       do while nControleJogadas > 0
          nNumeroAleatorio := hb_RandomInt(1,4)
          
-         @ nControleLinha,01 clear to @ nControleLinha,78
+         nControleColuna += 5
 
          @ nControleLinha,nControleColuna   say "[" + AllTrim(Transform(nNumeroAleatorio, "9")) + "]" 
          InKey(1)
          @ nControleLinha,nControleColuna clear to @ nControleLinha,nControleColuna
 
          @ nControleLinha,nControleColuna   say "[ " + "]" 
+
+         nControleColuna++
 
          @ nControleLinha,nControleColuna get nJogada picture "9" valid !Empty(nJogada)
          read
@@ -74,14 +75,18 @@ do while .t.
             if nOpcao == 1
                EXIT
             endif
+         
+            @ nControleLinha,nControleColuna   say "[" + AllTrim(Transform(nNumeroAleatorio, "9")) + "]" 
             loop
+
          endif
 
          if nJogada == nNumeroAleatorio
             nPontuacao += 10
             Alert("CERTA RESPOSTA! PONTUACAO: " + AllTrim(Str(nPontuacao)))
-            nControleColuna += 3
+            nControleJogadas--
             loop
+            
          else
             Alert("VOCE ERROU! PONTUACAO FINAL : " + AllTrim(Str(nPontuacao)))
             cRecord += cJogador
