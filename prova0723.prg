@@ -7,6 +7,7 @@ Set Message to 21 Center
 
 clear
 
+cCorVerde  := 'W/G'
 cCorAlerta := 'W/R'
 cRecord    := ""
 
@@ -30,9 +31,11 @@ do while .t.
       @ 03,01 clear to 23,78
 
       nPontuacao      := 0
-      nControleLinha  := 5
-      nControleColuna := 0
+      nControleLinha  := 6
+      nControleColuna := 5
+      
       cJogador := Space(30)
+      
       lAbandon  := .f.
       
       @ 03,02 say "NOME: "
@@ -42,7 +45,7 @@ do while .t.
 
       if lastkey() == 27
         cMensagem  := 'DESEJA ABANDONAR(SEU PROGRESSO NAO SERA SALVO)?'
-        nOpcao := Alert(cMensagem, {'SIM' , 'NAO'} , cCorAlerta)
+        nOpcao     := Alert(cMensagem, {'SIM' , 'NAO'} , cCorAlerta)
         if nOpcao == 1
            lAbandon := .t.
         endif
@@ -58,23 +61,29 @@ do while .t.
       lErro            := .f.
 
       do while Len(cSequencia) < nTamanhoMaximo .and. !lErro
+         
          cSequencia += AllTrim(Str(hb_RandomInt(1,4)))
 
-         nControleColuna := 0
+         nControleColuna := 5
 
          nIndice := 1
+         
          do while nIndice <= Len(cSequencia)
             nControleColuna += 5
+            
             @ nControleLinha, nControleColuna say "[" + SubStr(cSequencia, nIndice, 1) + "]"
+            
             InKey(1)
+            
             nIndice++
          enddo
 
-         @ nControleLinha, 01 clear to nControleLinha, 78
+         @ nControleLinha, 02 clear to nControleLinha, 78
 
-         nControleColuna := 0
+         nControleColuna := 05
 
          nIndice := 1
+         
          do while nIndice <= Len(cSequencia)
             nControleColuna += 5
             
@@ -114,35 +123,39 @@ do while .t.
             cPontosFix := SubStr(cPontosTmp, Len(cPontosTmp) - 5, 6)
             cRecord    += cNomeFix + cPontosFix
          else
-            Alert("CERTA RESPOSTA! PONTUACAO: " + AllTrim(Str(nPontuacao)) , "W/G")
+            Alert("CERTA RESPOSTA! PONTUACAO: " + AllTrim(Str(nPontuacao)) , cCorVerde)
          endif
       enddo
 
       if !lErro .and. Len(cSequencia) == nTamanhoMaximo
-         Alert("PARABENS! VOCE COMPLETOU A SEQUENCIA. PONTUACAO FINAL: " + AllTrim(Str(nPontuacao)) , "W/G")
+         Alert("PARABENS! VOCE COMPLETOU A SEQUENCIA. PONTUACAO FINAL: " + AllTrim(Str(nPontuacao)) , cCorVerde)
+         
          cNomeFix   := SubStr(AllTrim(cJogador) + Space(30), 1, 30)
          cPontosTmp := Space(6) + AllTrim(Str(nPontuacao))
          cPontosFix := SubStr(cPontosTmp, Len(cPontosTmp) - 5, 6)
-         cRecord += cNomeFix + cPontosFix
+         cRecord    += cNomeFix + cPontosFix
       endif
       if lAbandon
          loop
       endif
    elseif nOpcao == 3
       Alert("SAINDO..." , "W/R")
+      
       EXIT
    elseif nOpcao == 2
       @ 03,01 clear to 23,78
 
-      @ 03,02 say "HISTORICO DE JOGADAS"
-      @ 05,02 say "NOME" 
-      @ 05,35 say "PONTOS"
+      @ 03,31 say "HISTORICO DE JOGADAS"
+      @ 05,05 say "NOME" 
+      @ 05,67 say "PONTOS"
       
       cLinha := ""
+      
       nContLinha := 1
       
-      do while nContLinha <= 50
+      do while nContLinha <= 77
          cLinha += "-"
+         
          nContLinha++
       enddo
       
@@ -154,28 +167,33 @@ do while .t.
          nLinha           := 7
          nIndice          := 1
          nTamanhoRegistro := 36
+         
          do while nIndice <= Len(cRecord)
             cNome   := SubStr(cRecord, nIndice, 30)
             cPontos := SubStr(cRecord, nIndice + 30, 6)
             
             @ nLinha, 02 say cNome
-            @ nLinha, 35 say cPontos
+            @ nLinha, 65 say cPontos
             
             nLinha++
             if nLinha > 22
                InKey(0)
                
                @ 03,01 clear to 23,78
-               @ 03,02 say "HISTORICO DE JOGADAS"
-               @ 05,02 say "NOME" 
-               @ 05,35 say "PONTOS"
+               
+               @ 03,31 say "HISTORICO DE JOGADAS"
+               @ 05,05 say "NOME" 
+               @ 05,67 say "PONTOS"
                
                cLinha := ""
-               nContLinha := 1
-               do while nContLinha <= 50
+               
+               nContLinha := 0
+               
+               do while nContLinha <= 77
                   cLinha += "-"
                   nContLinha++
                enddo
+               
                @ 06,02 say cLinha
                
                nLinha := 7
@@ -185,8 +203,6 @@ do while .t.
          InKey(0)
       endif
    ENDIF
-
-
 enddo
 
-InKey(0)
+
