@@ -1,7 +1,11 @@
+// Define o formato de data para o padrao britanico (DD/MM/AAAA)
 Set date BRITISH
+// Define o ano base para interpretacao de anos com 2 digitos
 Set epoch to 1940
+// Exibe mensagem de status na linha 11, centralizada
 Set Message to 11 Center
 
+// Loop principal do menu de selecao de exercicios
 do while .t.
    clear
    
@@ -9,6 +13,7 @@ do while .t.
    
    @ 01,00 to 06,79
    
+   // Exibe o menu de selecao de exercicios
    @ 01,38 say "MENU"
    
    @ 02,01 prompt "EXERCICIO 7" Message "FAZ A LEITURA DE 2 VALORES E RETORNA O RESULTADO DAS 4 OPERACOES BASICAS"
@@ -19,6 +24,7 @@ do while .t.
    menu to nOpcao
 
    if nOpcao == 1
+      // Exibe aviso e inicia o exercicio 7
       Alert("EXERCICIO 7")
       do while .t.
          clear 
@@ -49,6 +55,7 @@ do while .t.
             endif
          endif
          
+          // Calcula as quatro operacoes aritmeticas
          nSoma      := nNum1 + nNum2
          nProduto   := nNum1 * nNum2
          nDivisao   := nNum1 / nNum2
@@ -63,10 +70,12 @@ do while .t.
       
       enddo
    elseif nOpcao == 2
+      // Exibe aviso e inicia o exercicio do mercado
       Alert("EXERCICIO MERCADO")
       do while .t.         
          clear
 
+          // Inicializa as variaveis do mercado
          dDataPed     := date()
          dDataEntrega := cTod("")
    
@@ -126,6 +135,7 @@ do while .t.
             @ 06,54 say "VALOR"
             @ 06,63 say "SUB-TOTAL"
             
+             // Exibe o numero do item e avanca a linha de exibicao
             @ nLinha += 2,06 say AllTrim(Str(nContProduto++)) 
             
             @ nLinha,15 get cProduto    picture "@!"        valid !Empty(cProduto)
@@ -133,6 +143,7 @@ do while .t.
             @ nLinha,53 get nValorProd  picture '@E 999.99' valid nValorProd  > 0
             read
             
+             // Calcula o subtotal do item e acumula no total
             nSubTotal := nValorProd * nQuantidade
             nTotal    += nSubTotal
             
@@ -199,10 +210,12 @@ do while .t.
          enddo
       enddo
    elseif nOpcao == 3 
+      // Exibe aviso e inicia o exercicio 9
       Alert("EXERCICIO 9")
       do while .t.
          clear
 
+          // Inicializa as variaveis do exercicio 9
          cLetra  := Space(1)
          cString := Space(30)
          
@@ -220,6 +233,7 @@ do while .t.
          @ 05,01 say "NUMERO DECIMAL:"
          @ 06,01 say "STRING........:"
 
+          // Leitura de diferentes tipos de dados
          @ 02,17 get cLetra             picture "@!"     valid !Empty(cLetra)
          @ 03,17 get dData                               valid !Empty(dData)
          @ 04,17 get Int(nInteiro)      picture "999"    valid !Empty(nInteiro)
@@ -241,6 +255,7 @@ do while .t.
 
          clear
 
+          // Exibe os valores lidos formatados
          @ 02,01 say "LETRA.........: " + cLetra
          @ 03,01 say "DATA..........: " + DToC(dData)
          @ 04,01 say "NUMERO INTEIRO: " + AllTrim(Str(nInteiro)) 
@@ -250,6 +265,7 @@ do while .t.
          InKey(0)
       enddo
    else
+      // Opcao 4: Sair do programa
       Alert("SAINDO...")
       exit
    endif 

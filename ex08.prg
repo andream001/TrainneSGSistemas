@@ -1,9 +1,14 @@
+// Define o formato de data para o padrao britanico (DD/MM/AAAA)
 Set date BRITISH
+// Define o ano base para interpretacao de anos com 2 digitos
 Set epoch to 1940
+// Define cor de fundo branco com texto preto
 SetColor('N/W')
 
+// Limpa a tela
 clear
 
+// Inicializa as variaveis de data, nome, forma de pagamento e valores
 dDataPed     := date()
 dDataEntrega := cTod(" ")
 
@@ -19,6 +24,7 @@ nTotal       := 0
 nSubTotal    := 0
 nLimiteLinha := 15
 
+// Loop principal: permite realizar multiplas compras no mercado
 do while .t.
 	clear
 
@@ -27,11 +33,13 @@ do while .t.
    
 	@ 01,01 to 04,79
 	
+	// Exibe o cabecalho do pedido
 	@ 02,04 say "NOME..:"
 	@ 03,04 say "LIMITE:"
 	@ 03,43 say "DATA ENTREGA:"
 	@ 02,43 say "DATA PEDIDO.:"
 	
+	// Leitura dos dados do cliente e validacao da data do pedido
 	@ 02,13 get cNome        picture '@!'          valid !Empty(cNome)
 	@ 03,12 get nLimite      picture '@E 9,999.99' valid nLimite > 0
 	@ 02,57 get dDataPed                           valid !Empty(dDataPed) .AND. dDataPed == date()
@@ -68,23 +76,27 @@ do while .t.
 		
 		@ nLinha += 2,06 say AllTrim(Str(nContProduto++)) 
 		
+		// Exibe o cabecalho da tabela de produtos
 		@ 05,04 say "ITEM"
 		@ 05,21 say "PRODUTO"
 		@ 05,40 say "QUANTIDADE"
 		@ 05,54 say "VALOR"
 		@ 05,63 say "SUB-TOTAL"
 		
+		// Leitura dos dados de cada produto do carrinho
 		@ nLinha,15 get cProduto    picture "@!"        valid !Empty(cProduto)
 		@ nLinha,43 get nQuantidade picture '99.99'     valid nQuantidade > 0
 		@ nLinha,53 get nValorProd  picture '@E 999.99' valid nValorProd  > 0
 		read
 		
+		// Calcula o subtotal e acumula no total geral
 		nSubTotal := nValorProd * nQuantidade
 		nTotal    += nSubTotal
 		
 		
 		@ nLinha,63 say AllTrim(Transform(nSubTotal , "@E 9,9999.99"))
 		
+		// Se a lista esta cheia, aguarda tecla e limpa para novos itens
 		if nLinha > nLimiteLinha
 			InKey(0)
 			@ 07,01 clear to 18,79
@@ -95,6 +107,7 @@ do while .t.
 			cMensagem  := 'DESEJA?'
 			cCorAlerta := 'W/R'
 			
+			// Opcoes ao pressionar ESC: continuar comprando, abandonar ou faturar
 			nOpcao := Alert(cMensagem, {'CONTINUAR' , 'ABANDONAR' , 'FATURAR'} , cCorAlerta)
 			
 			if     nOpcao == 1
@@ -104,10 +117,12 @@ do while .t.
 			elseif Opcao == 3 .and. nTotal > 0
 				@ 18,01 to 24,79
 				
+				// Se o total exceder o limite, destaca em vermelho
 				if nTotal > nLimite
 					cCor := 'R/W'
 				endif
 				
+				// Exibe o formulario de faturamento
 				@ 20,04 say "FORMA DE PAGAMENTO:"
 				@ 21,04 say "TOTAL.................: " + AllTrim(Transform(nTotal , "@E 9,999.99")) color (cCor)           
 				
@@ -115,6 +130,7 @@ do while .t.
 				@ 20,24 get cFormP       picture '@!'         valid cFormP $ "VP"
 				read
 				
+				// Se pagamento parcelado, calcula o valor de cada parcela
 				if cFormP == 'P'
 					@ 20,33 say "QUANTIDADE DE PARCELAS:"
 	

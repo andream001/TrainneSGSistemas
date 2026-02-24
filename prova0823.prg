@@ -1,33 +1,42 @@
 //ANDRE LUIZ BUNHAK
 
+// Define o formato de data para o padrao britanico (DD/MM/AAAA)
 Set date BRITISH
+// Define o ano base para interpretacao de anos com 2 digitos
 Set epoch to 1940
 SetColor('W/N')
+// Exibe mensagem de status na linha 23, centralizada
 Set Message to 23 center
 
+// Limpa a tela
 clear
 
-cBancodeNomes    := ""
-cBancodeDatas    := ""
-cBancodeSalarios := ""
+// Banco de dados em memoria: strings concatenadas de tamanho fixo por campo
+cBancodeNomes    := ""   // cada nome ocupa 25 caracteres
+cBancodeDatas    := ""   // cada data ocupa 8 caracteres (formato YYYYMMDD)
+cBancodeSalarios := ""   // cada salario ocupa 10 caracteres
 
-nTotalRegistros     := 0
-nRegistrosporpagina := 5
+nTotalRegistros     := 0   // contador de funcionarios cadastrados
+nRegistrosporpagina := 5   // quantidade de registros exibidos por pagina
 
-cOrdenacao          := "C"
-cOrdernarpor        := "N"
+// Criterios de ordenacao (padroes iniciais)
+cOrdenacao          := "C"   // C = Crescente, D = Decrescente
+cOrdernarpor        := "N"   // N = Nome, D = Data, S = Salario
 
 @ 01,00 to 24,79
 @ 03,01 to 03,78
 @ 04,17 to 23,17
 
+// Desenha a estrutura fixa da tela
 @ 02,30 say "CADASTRO DE FUNCIONARIOS"
 
 nOpcao := 0
 
+// Loop principal do menu
 do while .t.
    @ 04,18 clear to 23,78
    
+   // Exibe as opcoes do menu com suas descricoes
    @ 05,03 prompt "CADASTRAR"  message "Permite o cadastro de funcionarios"
    @ 06,03 prompt "CONSULTAR"  message "Exibe os funcionario cadastrados com paginacao e ordenacao"
    @ 07,03 prompt "CONFIGURAR" message "Define criterios de exibicao e ordenao"
@@ -37,6 +46,7 @@ do while .t.
 
    @ 23,02 clear to 23,78
    
+   // Opcao 1: Cadastrar novo funcionario
    if nOpcao == 1
       do while .t.
          @ 04,18 clear to 23,78
@@ -60,13 +70,15 @@ do while .t.
             exit
          endif
          
+         // Armazena os dados no banco de dados em memoria com tamanho fixo
          cBancodeNomes    += cNome
-         cBancodeDatas    += DToS(dDatadeAdmissao)
+         cBancodeDatas    += DToS(dDatadeAdmissao)   // converte para formato YYYYMMDD para ordenacao
          cBancodeSalarios += Str(nSalario, 10, 2)
          
          nTotalRegistros++
       enddo
       
+   // Opcao 2: Consultar funcionarios cadastrados com ordenacao e paginacao
    elseif nOpcao == 2      
       
       @ 02,01 clear to 02,78
@@ -126,6 +138,7 @@ do while .t.
          nRegistros++
       enddo
       
+      // Calcula o total de paginas necessarias
       nPaginaAtual := 1
       nTotalPaginas := Int(nTotalRegistros / nRegistrosporpagina)
       
@@ -171,6 +184,7 @@ do while .t.
          
          @ 22,35 say AllTrim(Str(nPaginaAtual)) + " / " + AllTrim(Str(nTotalPaginas))
          
+         // Opcoes de navegacao entre paginas
          @ 23,03 prompt "<" message "Pagina anterior"
          @ 23,76 prompt ">" message "Proxima pagina"
          
@@ -189,6 +203,7 @@ do while .t.
          endif
       enddo
 
+   // Opcao 3: Configurar parametros de paginacao e ordenacao
    elseif nOpcao == 3
       
       @ 02,01 clear to 02,78
